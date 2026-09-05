@@ -1,0 +1,52 @@
+# Project TODO
+
+- [x] Establish provenance-labeled public fashion/gifting catalog ingestion and data documentation
+- [x] Design and apply database schema for merchants, products, product facts, bundles, agent runs, decisions, mandates, orders, payment events, and audit events
+- [x] Add first-class product facts and verified payment-event records with replay-safe webhook processing
+- [x] Implement signed Razorpay webhook ingestion with duplicate detection and payment-event persistence
+- [x] Add webhook acceptance, duplicate-event, and invalid-signature test coverage
+- [x] Harden duplicate webhook persistence against repeated replay collisions and add multi-replay coverage
+- [x] Build protected merchant catalog management and provenance views
+- [x] Implement modular agent orchestration with structured intent, catalog, offer, merchant A2A, trust, checkout, and audit roles
+- [x] Implement deterministic Trust Gateway with scope, amount, expiry, idempotency, and consent checks
+- [x] Implement product hybrid retrieval with structured constraints, semantic-style ranking abstraction, and provenance cards
+- [x] Implement transparent offer and optional bundle recommendation logic
+- [x] Implement agent-card discovery and external buyer-agent simulation with authority scopes
+- [x] Implement a Razorpay test-mode checkout adapter with safe mock fallback, webhook verification design, and payment failure handling
+- [x] Build the premium dark customer commerce experience with Hinglish input, image reference upload, product recommendations, cart, and mandate confirmation
+- [x] Build the Jarvis-style real-time agent pipeline visualizer with seven agents, animated states, data flow, and trace panels
+- [x] Build merchant command center, agent-network console, audit ledger, decision receipt, and model cockpit screens
+- [x] Integrate secure server-side configurable LLM, Groq Whisper transcription, and speech response pathways where credentials are available
+- [x] Implement cache strategy, RBAC, authorization boundaries, rate limits, observability, and error states
+- [x] Require an unguessable checkout-mandate capability token before approval and surface cache hit/miss evidence from the backend
+- [x] Implement Decision Intelligence records that explain model/provider routing, multimodal/OCR decisions, retrieval mode, chunking, embedding, reranking, cache behavior, and policy outcomes per run
+- [x] Surface per-decision rationale, input scope, latency, confidence, data provenance, and fallback behavior in the agent pipeline visualizer
+- [x] Create Vitest coverage for trust rules, structured agent outputs, checkout idempotency, and provenance display logic
+- [x] Verify desktop and mobile layouts, pipeline interactions, happy path, blocked action, and graceful payment-failure flow
+- [x] Add a protected merchant catalog/provenance console backed by typed data and scoped management actions
+- [x] Implement a truthful semantic-retrieval abstraction and expose its real fallback and reranking state in Decision Intelligence
+- [x] Add a visible buyer-agent simulation that proves authority scopes through an end-to-end A2A flow
+- [x] Add protected Razorpay fallback/error UX and verify a graceful payment-failure customer flow
+- [x] Add Trust Gateway, checkout idempotency, and provenance-logic test coverage
+- [x] Verify mobile layout plus explicit blocked-action and payment-failure scenarios
+- [x] Add an explicit failed-payment customer state and verify it on desktop and mobile
+- [x] Add checkout approval/payment-verification idempotency and provenance serialization tests
+- [x] Wire a scoped inventory adjustment action into the protected merchant console and verify the typed update flow
+- [x] Capture the displayed failed-payment outcome on desktop and mobile after running the safe failure simulation
+- [x] Add service-level mandate approval and payment-verification idempotency tests
+- [x] Review all TODO items, save a project checkpoint, and deliver the completed project
+- [x] Select and integrate a real embedding model with persisted product vectors and cosine-similarity catalog ranking
+- [x] Add embedding refresh/reindex controls and disclose vector, lexical, cache, and reranking evidence in Decision Intelligence
+- [x] Request and activate the Razorpay Test Mode webhook secret, then display verified webhook payment-state updates in the UI
+- [x] Create a friendly protected merchant dashboard with catalog upload, product create/edit, inventory, delivery, tags, and source/provenance controls
+- [x] Add CSV catalog validation, preview, import, and error reporting for merchant uploads
+- [x] Write in-project product, architecture, setup, webhook, operations, and hackathon-demo documentation
+- [x] Add tests and visual verification for embedding retrieval, webhook status display, and merchant catalog management
+- [x] Save the upgraded project checkpoint and deliver the new version
+- [ ] Replace the portfolio-root Razorpay webhook URL with the published BazaarOS `/api/webhooks/razorpay` endpoint and validate Test Mode delivery
+- [x] Add a protected merchant product edit flow for price, description, image, delivery, style, and occasion fields with audit logging and vector refresh
+- [x] Disable immutable public-source identity fields in the product editor and explain the provenance boundary clearly
+- [x] Return and display the real vector-refresh outcome for every merchant product edit
+- [x] Add product-edit coverage for public-source and merchant-uploaded catalog records, audit logging, and embedding outcomes
+- [x] Deliver a candid chat-based product review covering product scope, dataset provenance, architecture tradeoffs, risks, and hackathon decisions
+- [ ] Create and deliver a clean downloadable BazaarOS project ZIP archive

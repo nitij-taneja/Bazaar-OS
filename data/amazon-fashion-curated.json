@@ -1,0 +1,1132 @@
+{
+  "generatedAt": "2026-08-20T13:24:14.894Z",
+  "source": {
+    "name": "Amazon Reviews'23 — Amazon Fashion metadata",
+    "url": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+    "sampleBytes": 2097152,
+    "selectionPolicy": "Unique public records with a non-null source price, an image, and a fashion/gifting-relevant title."
+  },
+  "products": [
+    {
+      "sourceProductId": "B01GNVW8MC",
+      "title": "Hugo Boss Mens Onyx Analog Casual Quartz Watch (Imported) 1513366",
+      "brand": "HUGO by Hugo Boss",
+      "priceUsd": 395,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/51Js-Bhx54L._AC_.jpg",
+      "averageRating": 5,
+      "ratingCount": 1,
+      "features": [],
+      "description": "Stainless steel case measuring 1.7 in (44 mm) Leather croc-embossed strap Silver-tone detail at dial Logo detail on dial 3-eye quartz movement Date display Water resistant: 5 ATM (165 feet).",
+      "details": {
+        "Is Discontinued By Manufacturer": "No",
+        "Package Dimensions": "4.8 x 4.7 x 3.6 inches; 13.6 Ounces",
+        "Department": "Mens",
+        "Batteries": "1 Product Specific batteries required. (included)",
+        "Date First Available": "June 20, 2016",
+        "Manufacturer": "Hugo Boss"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Hugo Boss Mens Onyx Analog Casual Quartz Watch (Imported) 1513366. HUGO by Hugo Boss. Stainless steel case measuring 1.7 in (44 mm) Leather croc-embossed strap Silver-tone detail at dial Logo detail on dial 3-eye quartz movement Date display Water resistant: 5 ATM (165 feet).. Is Discontinued By Manufacturer: No. Package Dimensions: 4.8 x 4.7 x 3.6 inches; 13.6 Ounces. Department: Mens. Batteries: 1 Product Specific batteries required. (included). Date First Available: June 20, 2016. Manufacturer: Hugo Boss",
+      "catalogDocumentSha256": "9ab6030b1b1697ffe95271c5cd3986561cedd0cb8953d3556874e4c174953a53",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07DQH92GR",
+      "title": "2Pcs Surgical Steel 16 Gauge 1/2 12mm Horseshoe Barbell Piercing Jewelry Eyebrow Nose Septum Cartilage Lip 3mm Ball M0572",
+      "brand": "MATIGA",
+      "priceUsd": 10.66,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41ckXhyHvkL._AC_.jpg",
+      "averageRating": 4.8,
+      "ratingCount": 7,
+      "features": [
+        "Ball closure"
+      ],
+      "description": "",
+      "details": {
+        "Package Dimensions": "3.5 x 2.7 x 0.7 inches; 0.63 Ounces",
+        "Item model number": "B07DQH92GR_US",
+        "Date First Available": "March 2, 2018",
+        "Country of Origin": "Thailand"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "2Pcs Surgical Steel 16 Gauge 1/2 12mm Horseshoe Barbell Piercing Jewelry Eyebrow Nose Septum Cartilage Lip 3mm Ball M0572. MATIGA. Ball closure. Package Dimensions: 3.5 x 2.7 x 0.7 inches; 0.63 Ounces. Item model number: B07DQH92GR_US. Date First Available: March 2, 2018. Country of Origin: Thailand",
+      "catalogDocumentSha256": "dcf9d9784f98fe08e5ac3aad3dd09182c053a64166bc5f6a57df91e578eec5ff",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07QL59SXQ",
+      "title": "Hendevl 100G Mixed Antiqued Charms Clock Face Charm Pendant for DIY Crafts, Gears, Jewelry Making, Steampunk Pendants",
+      "brand": "Hendevl",
+      "priceUsd": 8.69,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/61pzQOVUqLL._AC_.jpg",
+      "averageRating": 4.5,
+      "ratingCount": 90,
+      "features": [
+        "Package included: 100g mixed antiqued charms clock face charms",
+        "Material: Zinc Alloy.",
+        "Pendants Charms Size:1-5cm.",
+        "Useful :Jewelry Making,Jewelry DIY,Charms,pendant."
+      ],
+      "description": "",
+      "details": {
+        "Package Dimensions": "5.67 x 4.02 x 0.43 inches; 3.53 Ounces",
+        "Item model number": "HDH1038US",
+        "Date First Available": "April 12, 2019"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Hendevl 100G Mixed Antiqued Charms Clock Face Charm Pendant for DIY Crafts, Gears, Jewelry Making, Steampunk Pendants. Hendevl. Package included: 100g mixed antiqued charms clock face charms. Material: Zinc Alloy.. Pendants Charms Size:1-5cm.. Useful :Jewelry Making,Jewelry DIY,Charms,pendant.. Package Dimensions: 5.67 x 4.02 x 0.43 inches; 3.53 Ounces. Item model number: HDH1038US. Date First Available: April 12, 2019",
+      "catalogDocumentSha256": "4d5edfb1fc21a19d3240c03ccf92fc7741a97e412687f8e363e5c28c981faf65",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B074KJFGXT",
+      "title": "Gravity Defyer Proven Pain Relief Women's G-Defy Ion Athletic Shoes for Knee Pain",
+      "brand": "Gravity Defyer",
+      "priceUsd": 99.95,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41hXOXUMPPL._AC_.jpg",
+      "averageRating": 4,
+      "ratingCount": 3407,
+      "features": [
+        "fabric-and-synthetic",
+        "BREATHABLE MESH UPPER produces proper ventilation & flexibility.",
+        "ROOMY TOE BOX extra room for comfort and better blood circulation.",
+        "FRONT ROLLING FOREFOOT DESIGN Smooth movement and stability."
+      ],
+      "description": "",
+      "details": {
+        "Is Discontinued By Manufacturer": "No",
+        "Package Dimensions": "13 x 10 x 9 inches",
+        "Item model number": "TB9022FWS",
+        "Department": "womens",
+        "Date First Available": "June 8, 2017"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Gravity Defyer Proven Pain Relief Women's G-Defy Ion Athletic Shoes for Knee Pain. Gravity Defyer. fabric-and-synthetic. BREATHABLE MESH UPPER produces proper ventilation & flexibility.. ROOMY TOE BOX extra room for comfort and better blood circulation.. FRONT ROLLING FOREFOOT DESIGN Smooth movement and stability.. Is Discontinued By Manufacturer: No. Package Dimensions: 13 x 10 x 9 inches. Item model number: TB9022FWS. Department: womens. Date First Available: June 8, 2017",
+      "catalogDocumentSha256": "128f82221f97858c0266749b36ef66ded093b6089a85deccae5493485fcef615",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B00B3L3HPU",
+      "title": "Allmygold Long Stem Dipped 24K Gold Trim Genuine Green Rose in Gold Gift Box",
+      "brand": "Allmygold",
+      "priceUsd": 99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41p1t3nZAIL._AC_.jpg",
+      "averageRating": 4.7,
+      "ratingCount": 6,
+      "features": [
+        "24k Gold Dipped Green Lacquered Genuine Rose",
+        "Each rose measures 11-12 inches long and is packaged in a lovely gift box with clear viewing window.",
+        "This Green rose is a perfect gift either by itself or combined with any of our other beautiful colors to create a colorful bouquet",
+        "Comes In Gift Box"
+      ],
+      "description": "These beautiful real roses are hand-picked then treated through a very delicate electro-form process to protect and preserve their natural beauty. Each one is then individually dipped in 24k gold. Packaged in a lovely gift box, these unique, natural flowers create a gift that will be treasured for years to come. Create a colorful rose bouquet for Mom with the birthstone colors for every child and grandchild. Perfect gift for anniversaries, birthdays, weddings, graduations, housewarming, etc.",
+      "details": {
+        "Brand": "Allmygold",
+        "Plant or Animal Product Type": "ローズ",
+        "Color": "Green",
+        "Package Information": "Box",
+        "Occasion": "Anniversary",
+        "Is Discontinued By Manufacturer": "No",
+        "Package Dimensions": "13.2 x 4.1 x 3.2 inches; 8 Ounces",
+        "Item model number": "AMG9342Z",
+        "Department": "womens",
+        "Date First Available": "December 17, 2012",
+        "Manufacturer": "Allmygold.com"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Allmygold Long Stem Dipped 24K Gold Trim Genuine Green Rose in Gold Gift Box. Allmygold. 24k Gold Dipped Green Lacquered Genuine Rose. Each rose measures 11-12 inches long and is packaged in a lovely gift box with clear viewing window.. This Green rose is a perfect gift either by itself or combined with any of our other beautiful colors to create a colorful bouquet. Comes In Gift Box. These beautiful real roses are hand-picked then treated through a very delicate electro-form process to protect and preserve their natural beauty. Each one is then individually dipped in 24k gold. Packaged in a lovely gift box, these unique, natural flowers create a gift that will be treasured for years to come. Create a colorful rose bouquet for Mom with the birthstone colors for every child and grandchild. Perfect gift for anniversaries, birthdays, weddings, graduations, housewarming, etc.. Brand: Allmygold. Plant or Animal Product Type: ローズ. Color: Green. Package Information: Box. Occasion: Anniversary. Is Discontinued By Manufacturer: No. Package Dimensions: 13.2 x 4.1 x 3.2 inches; 8 Ounces. Item model number: AMG9342Z. Department: womens. Date First Available: December 17, 2012. Manufacturer: Allmygold.com",
+      "catalogDocumentSha256": "f6a40594dcbebd8b1552ef26599e707a9044fbc51446a15d85ccc04e591b5423",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B0BRMQBJR3",
+      "title": "Fumete 8 Pcs Silver Storage Bags Anti Tarnish Storage Bags 6\" x 6\" 9\" x 12\" 15\" x 15\" Zippered Silver Protector Bags for Silverware Jewelry Keeper Silverplate Flatware Resistant Tarnish",
+      "brand": "Fumete",
+      "priceUsd": 18.59,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/413yOKhS1gL._AC_.jpg",
+      "averageRating": 4,
+      "ratingCount": 7,
+      "features": [
+        "Abundant Quantity to Use: you will receive 8 pieces of silver storage bags anti tarnish, which are easy to clean, and they can hold more than 1 piece of silverware at a time, so they are enough for your daily use, you can share them with others as well",
+        "Various Sizes to Employ: these silver storage bags come in 3 sizes, respectively are approx. 6 x 6 inches (4 pcs), 9 x 12 inches (2 pcs), and 15 x 15 inches (2 pcs), the large size can be applied for large pieces of silver, such as dinner plates, and crafts, while the small size can be employed for earrings, bracelets, and necklaces",
+        "Fine Workmanship: these anti tarnish storage bags are added with anti oxidation additives, which can effectively keep the silver away from oxidizing and rusting due to contact with water in the air, so that your silver will shine for a long time",
+        "Reliable Material: this zippered silver storage bags for jewelry is made of double sided velvet fabric material, soft and comfortable, not easy to deform or fade, and it will not scratch your silverware or stain your items with other colors, as well as protect your belongings"
+      ],
+      "description": "",
+      "details": {
+        "Date First Available": "January 4, 2023",
+        "Manufacturer": "Fumete"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Fumete 8 Pcs Silver Storage Bags Anti Tarnish Storage Bags 6\" x 6\" 9\" x 12\" 15\" x 15\" Zippered Silver Protector Bags for Silverware Jewelry Keeper Silverplate Flatware Resistant Tarnish. Fumete. Abundant Quantity to Use: you will receive 8 pieces of silver storage bags anti tarnish, which are easy to clean, and they can hold more than 1 piece of silverware at a time, so they are enough for your daily use, you can share them with others as well. Various Sizes to Employ: these silver storage bags come in 3 sizes, respectively are approx. 6 x 6 inches (4 pcs), 9 x 12 inches (2 pcs), and 15 x 15 inches (2 pcs), the large size can be applied for large pieces of silver, such as dinner plates, and crafts, while the small size can be employed for earrings, bracelets, and necklaces. Fine Workmanship: these anti tarnish storage bags are added with anti oxidation additives, which can effectively keep the silver away from oxidizing and rusting due to contact with water in the air, so that your silver will shine for a long time. Reliable Material: this zippered silver storage bags for jewelry is made of double sided velvet fabric material, soft and comfortable, not easy to deform or fade, and it will not scratch your silverware or stain your items with other colors, as well as protect your belongings. Date First Available: January 4, 2023. Manufacturer: Fumete",
+      "catalogDocumentSha256": "5e9d110b26fe6094cd8bce332ed6363162dee12d1cf402483e556b62c9808d18",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B071RZFKJR",
+      "title": "Professional Shoe Shine Cloth. Shoe Buffing Cloth. Natural Fabric. 2-Pack.",
+      "brand": "Ralyn",
+      "priceUsd": 11.95,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/314oUV8mLYL._AC_.jpg",
+      "averageRating": 4.4,
+      "ratingCount": 2,
+      "features": [],
+      "description": "",
+      "details": {
+        "Is Discontinued By Manufacturer": "No",
+        "Product Dimensions": "20 x 0.32 x 5.5 inches; 0.96 Ounces",
+        "Date First Available": "September 27, 2017"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Professional Shoe Shine Cloth. Shoe Buffing Cloth. Natural Fabric. 2-Pack.. Ralyn. Is Discontinued By Manufacturer: No. Product Dimensions: 20 x 0.32 x 5.5 inches; 0.96 Ounces. Date First Available: September 27, 2017",
+      "catalogDocumentSha256": "7b9fa54b846017d2fc9ba043c0984e13769a286581717afeadb03b7f57af48e9",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B09T5ZXZX8",
+      "title": "LILIE&WHITE Rabbit And Parrot Stud Earrings Easter Earrings For Women Cute Animal Earrings For Easter Holiday Jewelry Gift",
+      "brand": "LILIE&WHITE",
+      "priceUsd": 9.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41LcfWtWI9L._AC_.jpg",
+      "averageRating": 4.2,
+      "ratingCount": 12,
+      "features": [
+        "【Design Concept】-Copper Cute Rabbit Stud Earrings. Being catty in the world of fashion jewellery earrings for women just got a lot cuter. Our cute bunny earrings are perfect pick for rabbit lovers.",
+        "【Cute Earrings Dimension】This bunny earrings is in two different pc .One is Rabbit, which is in 0.9*0.5 inch. The carrot one is in 1*0.6 inch. It is easy to take it on or take it off.",
+        "【Rabbit Earrings Material】-Made of copper and cubic zirconia, the bunny earrings is will not do any harms to your body. Without any harmful ingredients, it's nickel-free, lead-free, cadmium-free, not harmful for your health.",
+        "【Rabbit Stud earrings package】A free gift box coming with the bunny earrings. No wrapping needed. Perfect fashion earring gift for women, Anniversary Day, Valentines Day and Birthday to your girlfriend, wife and Mother's Day gift for mom. They are the \"must-have\" addition to EVERY woman's fashion jewelry collection."
+      ],
+      "description": "",
+      "details": {
+        "Package Dimensions": "3.94 x 1.18 x 0.39 inches; 1.06 Ounces",
+        "Item model number": "EH20826ALL",
+        "Department": "womens",
+        "Date First Available": "February 23, 2022"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "LILIE&WHITE Rabbit And Parrot Stud Earrings Easter Earrings For Women Cute Animal Earrings For Easter Holiday Jewelry Gift. LILIE&WHITE. 【Design Concept】-Copper Cute Rabbit Stud Earrings. Being catty in the world of fashion jewellery earrings for women just got a lot cuter. Our cute bunny earrings are perfect pick for rabbit lovers.. 【Cute Earrings Dimension】This bunny earrings is in two different pc .One is Rabbit, which is in 0.9*0.5 inch. The carrot one is in 1*0.6 inch. It is easy to take it on or take it off.. 【Rabbit Earrings Material】-Made of copper and cubic zirconia, the bunny earrings is will not do any harms to your body. Without any harmful ingredients, it's nickel-free, lead-free, cadmium-free, not harmful for your health.. 【Rabbit Stud earrings package】A free gift box coming with the bunny earrings. No wrapping needed. Perfect fashion earring gift for women, Anniversary Day, Valentines Day and Birthday to your girlfriend, wife and Mother's Day gift for mom. They are the \"must-have\" addition to EVERY woman's fashion jewelry collection.. Package Dimensions: 3.94 x 1.18 x 0.39 inches; 1.06 Ounces. Item model number: EH20826ALL. Department: womens. Date First Available: February 23, 2022",
+      "catalogDocumentSha256": "b32c1c3b3947ecf58b3bf987ac75f7c899c2bb0d0f636caaff0a6cd28264e3b7",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B0B8R3BVHF",
+      "title": "Bozanly Women's Fashion Long Sleeve Button Down Wool Blend Plaid Shacket Jacket Dress with Belt",
+      "brand": "Bozanly",
+      "priceUsd": 19.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41ueK2jqtQL._AC_.jpg",
+      "averageRating": 3.9,
+      "ratingCount": 13,
+      "features": [
+        "70% Polyester, 30% Cotton",
+        "Imported",
+        "Button Up Closure",
+        "Made of high quality fabric, soft, skin-friendly, comfortable to wear"
+      ],
+      "description": "",
+      "details": {
+        "Department": "Womens",
+        "Date First Available": "August 5, 2022"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Bozanly Women's Fashion Long Sleeve Button Down Wool Blend Plaid Shacket Jacket Dress with Belt. Bozanly. 70% Polyester, 30% Cotton. Imported. Button Up Closure. Made of high quality fabric, soft, skin-friendly, comfortable to wear. Department: Womens. Date First Available: August 5, 2022",
+      "catalogDocumentSha256": "7eb6574d061d5189a5b266da8b2607120d3804c747d1dfc0528755f462ab384a",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07DZQ148R",
+      "title": "Wintefei Fashion Simple Unisex Lovers Stainless Steel Mirror Finger Rings Jewelry Gifts - Colorful US 13",
+      "brand": "Wintefei",
+      "priceUsd": 1.73,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41a+Wt560-L._AC_.jpg",
+      "averageRating": 3.7,
+      "ratingCount": 116,
+      "features": [],
+      "description": "",
+      "details": {
+        "Product Dimensions": "0.87 x 0.87 x 0.87 inches",
+        "Item model number": "46223",
+        "Date First Available": "June 24, 2018"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Wintefei Fashion Simple Unisex Lovers Stainless Steel Mirror Finger Rings Jewelry Gifts - Colorful US 13. Wintefei. Product Dimensions: 0.87 x 0.87 x 0.87 inches. Item model number: 46223. Date First Available: June 24, 2018",
+      "catalogDocumentSha256": "0c44fe1ef108056e17819fb2cccea6db43bdf434f86e7515faea2960add1417b",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B095JLTN3X",
+      "title": "BLEOUK A Court of Thorns and Roses Inspired Keychain Velaris Gift ACOMAF Night Court Gift",
+      "brand": "BLEOUK",
+      "priceUsd": 13.89,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31fG3bv4BGS._AC_.jpg",
+      "averageRating": 4.9,
+      "ratingCount": 87,
+      "features": [
+        "Night Court Gift - “Don’t let the hard days win” Each keychain comes in a high quality velvet jewelry pouches and ready for gift giving. Any question please feel free to contact us",
+        "Material: High Quality Stainless Steel, it is lead free and nickel free,hypoallergenic, it doesn’t rust, change color or tarnish.",
+        "Measurement: 30mm(1.18\"). Key ring Diameter: 1.18\"TIPS:manual measuring permissible error.",
+        "If you are a A Court of Thorns and Roses fans, novelty keychain has collectible value for you. If your friend is a A Court of Thorns and Roses fans, this keychain is the best gift for them"
+      ],
+      "description": "We pay great attentions to the shopping experiences from the customers.Your satisfaction will be a great motivation for us.If you have any problem with the product,pleas contact us at first time.We will do our best to solve any problems and provide you with the best customer services IEAL GIFT CHOICE: This set is a great gift idea for any couple of any age. great gift for friends,lover or family on Christmas Day, Birthday, Valentines Day, Anniversary, Mothers Day,father's Day or even a gift for a military couple or deployed loved one.A sweet couples or family keychain set that is both simple and meaningful. One piece is not complete without the other! The Perfect Moving Away Keychain! When your loved ones aren't near this is the perfect way to let them know they will always be kept in your",
+      "details": {
+        "Color": "Silver",
+        "Material": "Metal",
+        "Special Feature": "customizable",
+        "Age Range (Description)": "Adult",
+        "Closure Type": "Pull On",
+        "Package Dimensions": "3.94 x 3.15 x 0.39 inches; 0.53 Ounces",
+        "Department": "womens",
+        "Date First Available": "April 17, 2021",
+        "Manufacturer": "BLEOUK"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "BLEOUK A Court of Thorns and Roses Inspired Keychain Velaris Gift ACOMAF Night Court Gift. BLEOUK. Night Court Gift - “Don’t let the hard days win” Each keychain comes in a high quality velvet jewelry pouches and ready for gift giving. Any question please feel free to contact us. Material: High Quality Stainless Steel, it is lead free and nickel free,hypoallergenic, it doesn’t rust, change color or tarnish.. Measurement: 30mm(1.18\"). Key ring Diameter: 1.18\"TIPS:manual measuring permissible error.. If you are a A Court of Thorns and Roses fans, novelty keychain has collectible value for you. If your friend is a A Court of Thorns and Roses fans, this keychain is the best gift for them. We pay great attentions to the shopping experiences from the customers.Your satisfaction will be a great motivation for us.If you have any problem with the product,pleas contact us at first time.We will do our best to solve any problems and provide you with the best customer services IEAL GIFT CHOICE: This set is a great gift idea for any couple of any age. great gift for friends,lover or family on Christmas Day, Birthday, Valentines Day, Anniversary, Mothers Day,father's Day or even a gift for a military couple or deployed loved one.A sweet couples or family keychain set that is both simple and meaningful. One piece is not complete without the other! The Perfect Moving Away Keychain! When your loved ones aren't near this is the perfect way to let them know they will always be kept in your. Color: Silver. Material: Metal. Special Feature: customizable. Age Range (Description): Adult. Closure Type: Pull On. Package Dimensions: 3.94 x 3.15 x 0.39 inches; 0.53 Ounces. Department: womens. Date First Available: April 17, 2021. Manufacturer: BLEOUK",
+      "catalogDocumentSha256": "b59efc91b20744d1ba3be171b0a2b814416afd5dc11008c2232c27efeca96e21",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B01E7UJB3K",
+      "title": "Sea Bags Recycled Sail Cloth Octopus Wristlet Zip Top Wristlet Clutch Zippered Wallet with Strap",
+      "brand": "Sea Bags",
+      "priceUsd": 40,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41ynCNUa7oL._AC_.jpg",
+      "averageRating": 4.7,
+      "ratingCount": 15,
+      "features": [
+        "dacron",
+        "Zipper closure",
+        "MULTIPLE OPTIONS FOR EVERYDAY USE: This recycled sail cloth wristlet is the perfect size for everyday use. It can be used as a wallet, purse, zip coin pouch, phone pouch, cosmetic case and more. Dimensions: 8\"l x 5\"h",
+        "ZIPPERED CLOSURE, BLACK CORDING: Slip this perfectly sized on your wrist, for easy access to everyday essentials."
+      ],
+      "description": "This dramatic wristlet features an artful illustration of one of the most mysterious creatures of the sea. Our octopus is printed with ink as dark as his own; on sails that have known the sea. Wear the comfy cord around your wrist, or use the pouch as a clutch or change purse. Printed on recycled sails.",
+      "details": {
+        "Is Discontinued By Manufacturer": "No",
+        "Item Weight": "0.8 Ounces",
+        "Item model number": "S500100",
+        "Department": "womens",
+        "Date First Available": "April 13, 2016",
+        "Manufacturer": "Sea Bags"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Sea Bags Recycled Sail Cloth Octopus Wristlet Zip Top Wristlet Clutch Zippered Wallet with Strap. Sea Bags. dacron. Zipper closure. MULTIPLE OPTIONS FOR EVERYDAY USE: This recycled sail cloth wristlet is the perfect size for everyday use. It can be used as a wallet, purse, zip coin pouch, phone pouch, cosmetic case and more. Dimensions: 8\"l x 5\"h. ZIPPERED CLOSURE, BLACK CORDING: Slip this perfectly sized on your wrist, for easy access to everyday essentials.. This dramatic wristlet features an artful illustration of one of the most mysterious creatures of the sea. Our octopus is printed with ink as dark as his own; on sails that have known the sea. Wear the comfy cord around your wrist, or use the pouch as a clutch or change purse. Printed on recycled sails.. Is Discontinued By Manufacturer: No. Item Weight: 0.8 Ounces. Item model number: S500100. Department: womens. Date First Available: April 13, 2016. Manufacturer: Sea Bags",
+      "catalogDocumentSha256": "c9eb097f3ab2e43760696e19bb995000fa5750516941fba6d104a6e4b7c5fab2",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B0C15CW8PK",
+      "title": "evzosrz Linen Pants for Women Wide Leg Pant Summer Casual High Waisted Palazzo Baggy Beach Lounge Trousers with Pockets",
+      "brand": "evzosrz",
+      "priceUsd": 5.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31fusPksqaL._AC_.jpg",
+      "averageRating": 1.6,
+      "ratingCount": 10,
+      "features": [
+        "100% Polyester",
+        "✔Size Guide:Size runs small,Please check the size chart before purchase and choose 1-2 size up.About Shipping Standard Shipping: 7-15 Days.If you have any question about product, please feel free to contact us.Imported.",
+        "✔show your own style, unique and confidence, soft,wide leg jumpsuits overalls loose button rompers solid color.",
+        "✔Button closure, womens cotton linen wide leg pants summer casual high waisted palazzo pants baggy lounge beach trousers closure"
+      ],
+      "description": "",
+      "details": {
+        "Item Weight": "7.05 Ounces",
+        "Item model number": "evzosrz-2023-pants",
+        "Department": "womens",
+        "Date First Available": "March 31, 2023",
+        "Manufacturer": "evzosrz"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "evzosrz Linen Pants for Women Wide Leg Pant Summer Casual High Waisted Palazzo Baggy Beach Lounge Trousers with Pockets. evzosrz. 100% Polyester. ✔Size Guide:Size runs small,Please check the size chart before purchase and choose 1-2 size up.About Shipping Standard Shipping: 7-15 Days.If you have any question about product, please feel free to contact us.Imported.. ✔show your own style, unique and confidence, soft,wide leg jumpsuits overalls loose button rompers solid color.. ✔Button closure, womens cotton linen wide leg pants summer casual high waisted palazzo pants baggy lounge beach trousers closure. Item Weight: 7.05 Ounces. Item model number: evzosrz-2023-pants. Department: womens. Date First Available: March 31, 2023. Manufacturer: evzosrz",
+      "catalogDocumentSha256": "cfecfee08c40474431aba227c05cb9ee5e03ba137f431194a3e181a9e12ee78f",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B00JPJHCZS",
+      "title": "PinMart Antique Silver Owl Lapel Pin Jewelry",
+      "brand": "PinMart",
+      "priceUsd": 8.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41VYlLP7dbL._AC_.jpg",
+      "averageRating": 5,
+      "ratingCount": 2,
+      "features": [
+        "Available as a single item or bulk packed. Select your quantity above.",
+        "Available as a single item or bulk packed. Select your quantity above.",
+        "Qty: 1 Pin",
+        "Our Owl Lapel Pin is a 3D die cast detailed design. Each Owl includes an anti-spin spur post to prevent spinning."
+      ],
+      "description": "Owl lapel pin. Made from finely cast pewter to show the intricate and detailed design. Each Owl lapel pin includes an anti spin spur post and a butterfly style clutch back. Packaged in individual poly bags.",
+      "details": {
+        "Product Dimensions": "1 x 1 x 1 inches; 1.6 Ounces",
+        "Department": "womens",
+        "Date First Available": "April 15, 2014",
+        "Manufacturer": "PinMart"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "PinMart Antique Silver Owl Lapel Pin Jewelry. PinMart. Available as a single item or bulk packed. Select your quantity above.. Available as a single item or bulk packed. Select your quantity above.. Qty: 1 Pin. Our Owl Lapel Pin is a 3D die cast detailed design. Each Owl includes an anti-spin spur post to prevent spinning.. Owl lapel pin. Made from finely cast pewter to show the intricate and detailed design. Each Owl lapel pin includes an anti spin spur post and a butterfly style clutch back. Packaged in individual poly bags.. Product Dimensions: 1 x 1 x 1 inches; 1.6 Ounces. Department: womens. Date First Available: April 15, 2014. Manufacturer: PinMart",
+      "catalogDocumentSha256": "56eb9552a20f71c52d9f2abd7db340db1af1dad6b7c37f1099dba7d4b2dabd38",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B08QTVVWT7",
+      "title": "Dapper&Doll Kids Apron and Chef Hat Gift Set - Toddler & Kid Sizes - Super Cute & Fun",
+      "brand": "Dapper&Doll",
+      "priceUsd": 18.95,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41FDVtu1FCL._AC_.jpg",
+      "averageRating": 4.7,
+      "ratingCount": 3398,
+      "features": [
+        "Polyester",
+        "Drawstring closure",
+        "Machine Wash",
+        "GREAT QUALITY & MADE TO LAST: Dapper&Doll kitchen aprons are well made and just the right size for kids. Wide straps, high-quality stitching, front pocket, and adjustable neck strap. Chef hat and apron are both machine washable."
+      ],
+      "description": "",
+      "details": {
+        "Date First Available": "December 16, 2020",
+        "Manufacturer": "Dapper&Doll"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Dapper&Doll Kids Apron and Chef Hat Gift Set - Toddler & Kid Sizes - Super Cute & Fun. Dapper&Doll. Polyester. Drawstring closure. Machine Wash. GREAT QUALITY & MADE TO LAST: Dapper&Doll kitchen aprons are well made and just the right size for kids. Wide straps, high-quality stitching, front pocket, and adjustable neck strap. Chef hat and apron are both machine washable.. Date First Available: December 16, 2020. Manufacturer: Dapper&Doll",
+      "catalogDocumentSha256": "8df228ff582d7e95aaeb17041c59c53858a8484ec6ac1ff98a59ca9c74d523ab",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B0B87KNYF7",
+      "title": "HGDEER Get Well Soon Gifts, Natural Stone Amethyst Healing Bracelet for Women Men Teen Girls",
+      "brand": "HGDEER",
+      "priceUsd": 14.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/51q6RkfYYfL._AC_.jpg",
+      "averageRating": 4.7,
+      "ratingCount": 199,
+      "features": [
+        "Amethyst Bracelet - A powerful and protective purple stone, Amethyst is a natural tranquilizer, it relieves stressand strain. soothes irritability, balances mood swings, and dispels anger, rage, fear, and anxiety.",
+        "Feel Better Gifts - Healing Prayers inspirational bracelets, unique get well soon jewelry gift, best stess relief gifts for women girls, who is going though tough time.",
+        "Size & Material - -- Made of 8mm amethystl stone, Girth is 7 inches, fit for most women and teen girls, The strong elastic rope makes it comfortable to wear and not easy to break",
+        "Ready for Giving - Package including a velvet gifts pouch, a anxiety crystal healing bracelets, and a meaningful quotes card, Great gifts idea on on Thanksgiving's Day, Birthday, Christmas, Halloween and so on"
+      ],
+      "description": "",
+      "details": {
+        "Material": "Metal",
+        "Color": "Purple",
+        "Brand": "HGDEER",
+        "Age Range (Description)": "Teen; Adult",
+        "Size": "7 inch",
+        "Package Dimensions": "5 x 4 x 0.5 inches; 0.8 Ounces",
+        "Item model number": "H0007",
+        "Department": "Womens",
+        "Date First Available": "August 1, 2022",
+        "Manufacturer": "HGDEER"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "HGDEER Get Well Soon Gifts, Natural Stone Amethyst Healing Bracelet for Women Men Teen Girls. HGDEER. Amethyst Bracelet - A powerful and protective purple stone, Amethyst is a natural tranquilizer, it relieves stressand strain. soothes irritability, balances mood swings, and dispels anger, rage, fear, and anxiety.. Feel Better Gifts - Healing Prayers inspirational bracelets, unique get well soon jewelry gift, best stess relief gifts for women girls, who is going though tough time.. Size & Material - -- Made of 8mm amethystl stone, Girth is 7 inches, fit for most women and teen girls, The strong elastic rope makes it comfortable to wear and not easy to break. Ready for Giving - Package including a velvet gifts pouch, a anxiety crystal healing bracelets, and a meaningful quotes card, Great gifts idea on on Thanksgiving's Day, Birthday, Christmas, Halloween and so on. Material: Metal. Color: Purple. Brand: HGDEER. Age Range (Description): Teen; Adult. Size: 7 inch. Package Dimensions: 5 x 4 x 0.5 inches; 0.8 Ounces. Item model number: H0007. Department: Womens. Date First Available: August 1, 2022. Manufacturer: HGDEER",
+      "catalogDocumentSha256": "d7440c122f993677aa8589aeb8721bf5a5a3ad42ca07bc36b251b8750a545dfc",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07V7VZJ6X",
+      "title": "MJ Metals Jewelry Brushed White Tungsten Carbide 6mm or 8mm Wedding Band Polished Edges Ring",
+      "brand": "MJ Metals Jewelry",
+      "priceUsd": 18.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/416ncOPWR4L._AC_.jpg",
+      "averageRating": 4.8,
+      "ratingCount": 49,
+      "features": [
+        "Handsome Band - Crafted with beautiful tungsten carbide, each ring boasts a mirrored polished finish, giving it a stunning look for work or home wear.",
+        "Our rings are Comfort-Fit - which means they slide over your finger smoothly, Available in 2mm, 3mm, 4mm, 5mm, 6mm, 7mm, 8mm or 10mm widths.",
+        "Heavy-Duty Resiliency - This premium-grade tungsten carbide ring is durable enough for day-to-day wear.",
+        "Free velvet bag included with each ring"
+      ],
+      "description": "",
+      "details": {
+        "Item model number": "WTG-128A",
+        "Department": "unisex-adult",
+        "Date First Available": "July 12, 2019",
+        "Manufacturer": "MJ Metals Jewelry"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "MJ Metals Jewelry Brushed White Tungsten Carbide 6mm or 8mm Wedding Band Polished Edges Ring. MJ Metals Jewelry. Handsome Band - Crafted with beautiful tungsten carbide, each ring boasts a mirrored polished finish, giving it a stunning look for work or home wear.. Our rings are Comfort-Fit - which means they slide over your finger smoothly, Available in 2mm, 3mm, 4mm, 5mm, 6mm, 7mm, 8mm or 10mm widths.. Heavy-Duty Resiliency - This premium-grade tungsten carbide ring is durable enough for day-to-day wear.. Free velvet bag included with each ring. Item model number: WTG-128A. Department: unisex-adult. Date First Available: July 12, 2019. Manufacturer: MJ Metals Jewelry",
+      "catalogDocumentSha256": "2396c9f9be0f35410731395f23d6f98c55ac5fdc1f799c741b171098f84e2435",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B084RR9N7B",
+      "title": "Doerix Halloween Skull Face Mask Bandana, Motorcycle Face Mask for Men Women, Half Face Cover Rave Scarf Neck Gaiter Biker",
+      "brand": "Doerix",
+      "priceUsd": 9.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/51rVe6hWizL._AC_.jpg",
+      "averageRating": 4.4,
+      "ratingCount": 4620,
+      "features": [
+        "90% poly+10% spandex",
+        "进口",
+        "Cool Design & Multifunctional Use: All patterns on the sweatbands are originally designed in Skull style and they will make you look distinctive and cool. Our Skull Face Mask have more than 13 different dress ways. They can use as a neck gaiter, head wrap, face scarf, balaclava, face mask, beanie, sweatband or scarf bandana.",
+        "Lightweight And Comfort: This Motorcycle Face Mask is made of Polyester microfiber, which can absorb sweat and dry quickly. It's breathable and lightweight that increases comfort in use. Our neck gaiter keeps you cool in the sun and warm in cold weather."
+      ],
+      "description": "",
+      "details": {
+        "Date First Available": "February 13, 2020",
+        "Manufacturer": "Doerix"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Doerix Halloween Skull Face Mask Bandana, Motorcycle Face Mask for Men Women, Half Face Cover Rave Scarf Neck Gaiter Biker. Doerix. 90% poly+10% spandex. 进口. Cool Design & Multifunctional Use: All patterns on the sweatbands are originally designed in Skull style and they will make you look distinctive and cool. Our Skull Face Mask have more than 13 different dress ways. They can use as a neck gaiter, head wrap, face scarf, balaclava, face mask, beanie, sweatband or scarf bandana.. Lightweight And Comfort: This Motorcycle Face Mask is made of Polyester microfiber, which can absorb sweat and dry quickly. It's breathable and lightweight that increases comfort in use. Our neck gaiter keeps you cool in the sun and warm in cold weather.. Date First Available: February 13, 2020. Manufacturer: Doerix",
+      "catalogDocumentSha256": "276b56ff8a8bbbcccf26543d7dd41e195082966fa704b4742ef2c7937f368367",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07XYX6142",
+      "title": "200Pcs Compatible for Garmin Venu Bands, Buleshaw Stainless Steel Metal Replacement Straps Compatible for Garmin Venu GPS Smartwatch (Silver)",
+      "brand": "Blueshaw",
+      "priceUsd": 15.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/51NB+8ROJLL._AC_.jpg",
+      "averageRating": 3.1,
+      "ratingCount": 7,
+      "features": [
+        "Buckle closure"
+      ],
+      "description": "",
+      "details": {
+        "Package Dimensions": "6.1 x 3 x 0.9 inches; 3.99 Ounces",
+        "Date First Available": "September 17, 2019"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "200Pcs Compatible for Garmin Venu Bands, Buleshaw Stainless Steel Metal Replacement Straps Compatible for Garmin Venu GPS Smartwatch (Silver). Blueshaw. Buckle closure. Package Dimensions: 6.1 x 3 x 0.9 inches; 3.99 Ounces. Date First Available: September 17, 2019",
+      "catalogDocumentSha256": "ba2eaff3ca85c37a8750f4c91b19d988d5ea4699a5ea4afef316be084e85e6bf",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B08P3MDP7T",
+      "title": "Cirbic English Talking Watch with Large Numbers and Expandable Strap, self-Setting for Visually impaired, Blind or Elder People (American Accent)",
+      "brand": "Cirbic",
+      "priceUsd": 34.98,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/418G8k4jR3L._AC_.jpg",
+      "averageRating": 4.1,
+      "ratingCount": 146,
+      "features": [
+        "EASY TO USE - press on 2pm button and watch will announce time in clear and loud Male voice. Press on 4pm for the date.",
+        "EASY TO SET - clock set's itself during night time, so you only need to set your correct timezone (clear instructions provided)",
+        "EASY TO PUT ON - stretch band makes it easy to put the watch on and off, which is important for visually impaired or blind people",
+        "WORKS OUT OF THE BOX - Comes with pre-installed batteries and set to EST timezone."
+      ],
+      "description": "Talking Watch with Large Numbers and Expandable Strap, self-Setting for Visually impaired, Blind or Elder People, English",
+      "details": {
+        "Package Dimensions": "5.71 x 2.6 x 1.73 inches; 2.82 Ounces",
+        "Item model number": "fon-NA",
+        "Department": "Unisex-adult",
+        "Date First Available": "November 24, 2020",
+        "Manufacturer": "Cirbic"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Cirbic English Talking Watch with Large Numbers and Expandable Strap, self-Setting for Visually impaired, Blind or Elder People (American Accent). Cirbic. EASY TO USE - press on 2pm button and watch will announce time in clear and loud Male voice. Press on 4pm for the date.. EASY TO SET - clock set's itself during night time, so you only need to set your correct timezone (clear instructions provided). EASY TO PUT ON - stretch band makes it easy to put the watch on and off, which is important for visually impaired or blind people. WORKS OUT OF THE BOX - Comes with pre-installed batteries and set to EST timezone.. Talking Watch with Large Numbers and Expandable Strap, self-Setting for Visually impaired, Blind or Elder People, English. Package Dimensions: 5.71 x 2.6 x 1.73 inches; 2.82 Ounces. Item model number: fon-NA. Department: Unisex-adult. Date First Available: November 24, 2020. Manufacturer: Cirbic",
+      "catalogDocumentSha256": "08e1f69c459c9c9f87ed293861ede52c2fbc3413bfc9c7e65e9e4e987f070968",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B0C19ZY18T",
+      "title": "Zolure 18G Nose Rings Nose Studs Stainless Steel Nose Piercing Jewelry for Women Men",
+      "brand": "Zolure",
+      "priceUsd": 6.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/41r-UHlwrpS._AC_.jpg",
+      "averageRating": 4.3,
+      "ratingCount": 219,
+      "features": [
+        "[Package]: Total 18 pcs C shaped nose rings in different colors, delicate and unique, meet all your needs for different occasions, come with a black velvet pouch.",
+        "[Safety Material]: These nose piercing jewelry are made of surgical steel. Comfortable and could be long time wearing.",
+        "[Suitable Size]: Stainless steel nose rings nose studs are 20G(0.8mm), nose hoops inner diameter: 8mm",
+        "[Multi Usages]: These nose piercing jewelry for women men can be as earring hoops, nostril piercing rings hoop, lip rings, cartilage earrings, nose pin studs, septum rings, helix earring hoops, daith earring hoop and other more body piercings jewelry."
+      ],
+      "description": "",
+      "details": {
+        "Department": "womens",
+        "Date First Available": "April 3, 2023"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Zolure 18G Nose Rings Nose Studs Stainless Steel Nose Piercing Jewelry for Women Men. Zolure. [Package]: Total 18 pcs C shaped nose rings in different colors, delicate and unique, meet all your needs for different occasions, come with a black velvet pouch.. [Safety Material]: These nose piercing jewelry are made of surgical steel. Comfortable and could be long time wearing.. [Suitable Size]: Stainless steel nose rings nose studs are 20G(0.8mm), nose hoops inner diameter: 8mm. [Multi Usages]: These nose piercing jewelry for women men can be as earring hoops, nostril piercing rings hoop, lip rings, cartilage earrings, nose pin studs, septum rings, helix earring hoops, daith earring hoop and other more body piercings jewelry.. Department: womens. Date First Available: April 3, 2023",
+      "catalogDocumentSha256": "ac13d198d2e5e40124608d5fc14f9c5a7ba37b15f051141595fd70a3260d413c",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B09JPJ6WT1",
+      "title": "Anooma Polarized Sunglasses for Women Men UV400 Protection TAC Lens TR90 Ultralight Frame A001",
+      "brand": "Anooma",
+      "priceUsd": 15.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31shRV766cL._AC_.jpg",
+      "averageRating": 4.6,
+      "ratingCount": 5,
+      "features": [
+        "UV Protection Coating coating",
+        "Bridge: 19 millimeters"
+      ],
+      "description": "Anooma polarized sports sunglasses for men women baseball running cycling fishing golf style with 100% UV protection, TR90 Superlight Frame and TAC HD Lens HD POLARIZED LENS: - HD polarized lenses can filter out sunlight reflected glare.- And protect your eyes from long term damage by blocking 100% of harmful UVA and UVB rays.- Restore true color, eliminate reflected light and scattered light and protect eyes perfectly.- Polarized sunglasses cut glare and haze so your eyes are more comfortable and you can see better. TR90 FRAME: - TR90 is Unbreakable Ultra light and highly Stress-Resistant Material.- The sunglass is both lightweight and durable for all-day comfort and protection.- If you drop them in the water, they will float. PRODUCTS DIMENSION: - lens height:48mm(1.89 inches); - lens wi",
+      "details": {
+        "Department": "Unisex-adult",
+        "Date First Available": "October 18, 2021"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Anooma Polarized Sunglasses for Women Men UV400 Protection TAC Lens TR90 Ultralight Frame A001. Anooma. UV Protection Coating coating. Bridge: 19 millimeters. Anooma polarized sports sunglasses for men women baseball running cycling fishing golf style with 100% UV protection, TR90 Superlight Frame and TAC HD Lens HD POLARIZED LENS: - HD polarized lenses can filter out sunlight reflected glare.- And protect your eyes from long term damage by blocking 100% of harmful UVA and UVB rays.- Restore true color, eliminate reflected light and scattered light and protect eyes perfectly.- Polarized sunglasses cut glare and haze so your eyes are more comfortable and you can see better. TR90 FRAME: - TR90 is Unbreakable Ultra light and highly Stress-Resistant Material.- The sunglass is both lightweight and durable for all-day comfort and protection.- If you drop them in the water, they will float. PRODUCTS DIMENSION: - lens height:48mm(1.89 inches); - lens wi. Department: Unisex-adult. Date First Available: October 18, 2021",
+      "catalogDocumentSha256": "c9fb8d327d30586c1978dae5555e8dc4af4b2427352c0e68f4de6981270be6aa",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B09JBJ1GWK",
+      "title": "Vanolu Retro Rimless Women Aviator Sunglasses Classic Lady Oversized Sun Glasses",
+      "brand": "Vanolu",
+      "priceUsd": 15.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/2110B8Ay16S._AC_.jpg",
+      "averageRating": 4.3,
+      "ratingCount": 425,
+      "features": [
+        "Imported",
+        "Metal frame",
+        "Plastic lens",
+        "Non-Polarized"
+      ],
+      "description": "",
+      "details": {
+        "Department": "Unisex Adult",
+        "Date First Available": "October 13, 2021",
+        "Manufacturer": "Vanolu"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Vanolu Retro Rimless Women Aviator Sunglasses Classic Lady Oversized Sun Glasses. Vanolu. Imported. Metal frame. Plastic lens. Non-Polarized. Department: Unisex Adult. Date First Available: October 13, 2021. Manufacturer: Vanolu",
+      "catalogDocumentSha256": "efa41f8c00fd3672fc59fcf8c6b0678889f449fac053376996c318ccee7baf82",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B06ZY5DP7H",
+      "title": "Archer Watch Straps - Stainless Steel PVD Replacement Buckle - Choice of Color, Finish, Size",
+      "brand": "Archer Watch Straps",
+      "priceUsd": 7.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31qoq1UcYGL._AC_.jpg",
+      "averageRating": 4.6,
+      "ratingCount": 2048,
+      "features": [
+        "EXCEPTIONAL DURABILITY - Congratulations. You’re about to brandish one of the slickest, strongest buckles on the market. Made from corrosion resistant, stainless steel and further coated with a vacuum PVD finish, your brand new buckle from Archer Watch Straps will not crack, chip, or rust. We like to call that a worry-free wear.",
+        "VARIETY REFINED - We’ve got a bit of a vibe here at Archer. We like our accessories simple and elegant. Finishing touches that catch the eye, but aren’t overly flashy. So, we’ve pared our selection of premium buckles to reflect that style. With plenty of sleek, stunning colors, and three slick finishes, you can add a dash of detail to perfect your favorite watch strap and time piece combination.",
+        "COMPLETE COMPATIBLITY - Each of our buckles come in a variety of sizes, so you can easily slip them on any watch band – Archer or not – that takes a 16mm, 18mm, 19mm, 20mm, 21mm, 22mm, 23mm, or 24mm buckle. Each buckle also comes with both 2mm and 3mm wide tongues, so if your particular band has slightly smaller, or wider punched holes, you won’t have to sacrifice your style.",
+        "SIMPLE SET UP - Once you’ve chosen the buckle you like best, the hard part’s over. To attach it, just grab a pin, paperclip, or the straight end of a spring bar tool, and release the spring bar through the holes on the sides of the buckle. Then slot the spring bar into the corresponding holes on your watch strap, and you’re done. To remove it, simply reverse the process. Now, you can swap in whatever buckle you’re ready to rock next."
+      ],
+      "description": "",
+      "details": {
+        "Date First Available": "April 17, 2017"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Archer Watch Straps - Stainless Steel PVD Replacement Buckle - Choice of Color, Finish, Size. Archer Watch Straps. EXCEPTIONAL DURABILITY - Congratulations. You’re about to brandish one of the slickest, strongest buckles on the market. Made from corrosion resistant, stainless steel and further coated with a vacuum PVD finish, your brand new buckle from Archer Watch Straps will not crack, chip, or rust. We like to call that a worry-free wear.. VARIETY REFINED - We’ve got a bit of a vibe here at Archer. We like our accessories simple and elegant. Finishing touches that catch the eye, but aren’t overly flashy. So, we’ve pared our selection of premium buckles to reflect that style. With plenty of sleek, stunning colors, and three slick finishes, you can add a dash of detail to perfect your favorite watch strap and time piece combination.. COMPLETE COMPATIBLITY - Each of our buckles come in a variety of sizes, so you can easily slip them on any watch band – Archer or not – that takes a 16mm, 18mm, 19mm, 20mm, 21mm, 22mm, 23mm, or 24mm buckle. Each buckle also comes with both 2mm and 3mm wide tongues, so if your particular band has slightly smaller, or wider punched holes, you won’t have to sacrifice your style.. SIMPLE SET UP - Once you’ve chosen the buckle you like best, the hard part’s over. To attach it, just grab a pin, paperclip, or the straight end of a spring bar tool, and release the spring bar through the holes on the sides of the buckle. Then slot the spring bar into the corresponding holes on your watch strap, and you’re done. To remove it, simply reverse the process. Now, you can swap in whatever buckle you’re ready to rock next.. Date First Available: April 17, 2017",
+      "catalogDocumentSha256": "28ce38b2a6287d72faf52fdea12f337b1ce9edb076c7b83741db8a662547da63",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B07K4CC56K",
+      "title": "Speidel Replacement Scrub Silicone Watchband for Nurses, Doctors, Students in 18mm, 20mm, 22mm, 24mm",
+      "brand": "Speidel",
+      "priceUsd": 10.95,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31ziUwhrJnL._AC_.jpg",
+      "averageRating": 4.5,
+      "ratingCount": 781,
+      "features": [
+        "DURABILITY & COMFORT: Easy to Clean Super Soft 100% Silicone Band made to feel comfortable on the user’s skin.",
+        "FIND YOUR SIZE: Measure between the lugs to find your millimeter size. 18MM will fit Speidel's Scrub Original, Scrub 30V1, Scrub 30V2, Scrub Glow or most watches that have an 18MM lug width. 20MM will fit most watches that have a 20MM lug width. 22MM will fit Speidel's MEGA Scrub or most watches with a 22MM lug width. 24MM will fit most watches with a 24MM lug width.",
+        "TOTAL LENGTH: Our 18MM band has a total length of 7.7\", our 20MM, 22MM and 24MM bands have a total length of 7.88\"",
+        "EASY CHANGE: This band comes with EZ-Change pins to make switching a band a simple task. With multiple color options, you can match your unique style."
+      ],
+      "description": "",
+      "details": {
+        "Date First Available": "November 2, 2018"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "Speidel Replacement Scrub Silicone Watchband for Nurses, Doctors, Students in 18mm, 20mm, 22mm, 24mm. Speidel. DURABILITY & COMFORT: Easy to Clean Super Soft 100% Silicone Band made to feel comfortable on the user’s skin.. FIND YOUR SIZE: Measure between the lugs to find your millimeter size. 18MM will fit Speidel's Scrub Original, Scrub 30V1, Scrub 30V2, Scrub Glow or most watches that have an 18MM lug width. 20MM will fit most watches that have a 20MM lug width. 22MM will fit Speidel's MEGA Scrub or most watches with a 22MM lug width. 24MM will fit most watches with a 24MM lug width.. TOTAL LENGTH: Our 18MM band has a total length of 7.7\", our 20MM, 22MM and 24MM bands have a total length of 7.88\". EASY CHANGE: This band comes with EZ-Change pins to make switching a band a simple task. With multiple color options, you can match your unique style.. Date First Available: November 2, 2018",
+      "catalogDocumentSha256": "27264d6a9eaeffcdb8b81702fbc2ba9f061a3c85a0fd9d2f15878b95081e398f",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    },
+    {
+      "sourceProductId": "B09LLS1LGH",
+      "title": "OrthoComfoot Men's Plantar Fasciitis Slip-Ons Sneakers, Arch Support Walking Loafers, Foot and Heel Pain Relief Arch Support Shoes, Orthopedic Comfortable Casual Slip On",
+      "brand": "OrthoComfoot",
+      "priceUsd": 79.99,
+      "sourceImageUrl": "https://m.media-amazon.com/images/I/31wdUt3KI-L._AC_.jpg",
+      "averageRating": 4.1,
+      "ratingCount": 1058,
+      "features": [
+        "100% Leather",
+        "Imported",
+        "Ethylene Vinyl Acetate sole",
+        "★COMFORTABLE UPPER: Men’s leather Shoes with excellent quality leather material, superior texture, elegant and generous appearance casual shoes with classic colors, super comfortable and fashionable for men’s. they can be dressed up with jeans, leggings and shorts. Super nice and amazing comfy."
+      ],
+      "description": "",
+      "details": {
+        "Department": "Mens",
+        "Date First Available": "August 12, 2021",
+        "Manufacturer": "OrthoComfoot"
+      },
+      "boughtTogether": [],
+      "catalogDocument": "OrthoComfoot Men's Plantar Fasciitis Slip-Ons Sneakers, Arch Support Walking Loafers, Foot and Heel Pain Relief Arch Support Shoes, Orthopedic Comfortable Casual Slip On. OrthoComfoot. 100% Leather. Imported. Ethylene Vinyl Acetate sole. ★COMFORTABLE UPPER: Men’s leather Shoes with excellent quality leather material, superior texture, elegant and generous appearance casual shoes with classic colors, super comfortable and fashionable for men’s. they can be dressed up with jeans, leggings and shorts. Super nice and amazing comfy.. Department: Mens. Date First Available: August 12, 2021. Manufacturer: OrthoComfoot",
+      "catalogDocumentSha256": "d3ee339c0fd01fb76009dfae4a740c69f5d085b55006482660f8b8ec5d22ddd1",
+      "provenance": {
+        "sourceName": "Amazon Reviews'23 — Amazon Fashion metadata",
+        "sourcePublisher": "McAuley Lab, UC San Diego",
+        "sourceUrl": "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw/meta_categories/meta_Amazon_Fashion.jsonl",
+        "retrievedFromByteSample": true,
+        "sourceFields": [
+          "title",
+          "store",
+          "price",
+          "images",
+          "features",
+          "description",
+          "details",
+          "bought_together",
+          "average_rating",
+          "rating_number"
+        ],
+        "note": "Operational inventory, INR pricing, and delivery eligibility are intentionally not inferred from this public source and must be supplied by a merchant configuration layer."
+      }
+    }
+  ]
+}
