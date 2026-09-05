@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import {
   agentRuns,
@@ -251,17 +251,27 @@ export function loadFallbackCatalog(): CatalogProduct[] {
   return [];
 }
 
-export async function loadDemoMerchant() {
+const DEMO_MERCHANT_FALLBACKS: Record<string, { id: number; ownerId: number; name: string; slug: string; description: string; defaultCurrency: string }> = {
+  novacart: { id: 1, ownerId: 1, name: "NovaCart", slug: "novacart", description: "An AI-transactable lifestyle & fashion merchant enabled by BazaarOS gateway.", defaultCurrency: "INR" },
+  "aurelia-premium": { id: 2, ownerId: 1, name: "Aurelia Premium", slug: "aurelia-premium", description: "A premium-positioned lifestyle retailer on BazaarOS: higher-tier pricing, curated selection, slower delivery.", defaultCurrency: "INR" },
+  "quickbazaar-express": { id: 3, ownerId: 1, name: "QuickBazaar Express", slug: "quickbazaar-express", description: "A delivery-speed-focused retailer on BazaarOS: same/next-day fulfillment, competitive pricing.", defaultCurrency: "INR" },
+};
+
+export async function loadDemoMerchant(slug = "novacart") {
   const db = await getDb();
   if (db) {
     try {
-      const result = await db.select().from(merchants).where(eq(merchants.slug, "novacart")).limit(1);
+      const result = await db.select().from(merchants).where(eq(merchants.slug, slug)).limit(1);
       if (result[0]) return result[0];
     } catch {
       // fallback below
     }
   }
-  return { id: 1, ownerId: 1, name: "NovaCart", slug: "novacart", description: "An AI-transactable lifestyle & fashion merchant enabled by BazaarOS gateway.", defaultCurrency: "INR" };
+  return DEMO_MERCHANT_FALLBACKS[slug] ?? DEMO_MERCHANT_FALLBACKS.novacart;
+}
+
+export function listKnownMerchantSlugs() {
+  return Object.keys(DEMO_MERCHANT_FALLBACKS);
 }
 
 export async function loadCatalogWithCache(merchantId: number): Promise<{ catalog: CatalogProduct[]; cache: "hit" | "miss" }> {
@@ -400,12 +410,53 @@ async function recordAudit(merchantId: number, runId: number | null, eventType: 
   }
 }
 
+// Real, already-persisted data from any caller — a browser session, the
+// external-buyer-agents.mjs script, or a genuine third-party agent — since
+// every run writes its full trace to agentSteps regardless of who called it.
+export async function getRecentAgentActivity(limit = 12) {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    const runs = await db
+      .select({
+        runId: agentRuns.id,
+        status: agentRuns.status,
+        startedAt: agentRuns.startedAt,
+        channel: commerceIntents.channel,
+        query: commerceIntents.rawInput,
+      })
+      .from(agentRuns)
+      .innerJoin(commerceIntents, eq(commerceIntents.id, agentRuns.intentId))
+      .orderBy(desc(agentRuns.startedAt))
+      .limit(limit);
+
+    const activity = [];
+    for (const run of runs) {
+      const steps = await db
+        .select({
+          agentName: agentSteps.agentName,
+          status: agentSteps.status,
+          decisionKind: agentSteps.decisionKind,
+          rationale: agentSteps.rationale,
+          latencyMs: agentSteps.latencyMs,
+        })
+        .from(agentSteps)
+        .where(eq(agentSteps.runId, run.runId))
+        .orderBy(asc(agentSteps.id));
+      activity.push({ ...run, steps });
+    }
+    return activity;
+  } catch {
+    return [];
+  }
+}
+
 function trace(agentName: AgentName, decisionKind: string, rationale: string, inputSummary: Record<string, unknown>, outputSummary: Record<string, unknown>, alternatives: Array<Record<string, unknown>>, provenance: Array<Record<string, unknown>>, latencyMs: number, status: AgentTrace["status"] = "completed"): AgentTrace {
   return { agentName, status, decisionKind, rationale, inputSummary, outputSummary, alternatives, provenance, latencyMs };
 }
 
-export async function runCommerceAgent(input: { query: string; channel: Channel; includeImage: boolean; imageStyleTags?: string[]; authorityScope?: string }): Promise<AgentRunResponse> {
-  const merchant = await loadDemoMerchant();
+export async function runCommerceAgent(input: { query: string; channel: Channel; includeImage: boolean; imageStyleTags?: string[]; authorityScope?: string; merchantSlug?: string }): Promise<AgentRunResponse> {
+  const merchant = await loadDemoMerchant(input.merchantSlug);
   const db = await getDb();
   const deterministicIntent = extractIntent(input.query, input.channel);
   const groq = await extractGroqIntent(input.query);
@@ -786,8 +837,8 @@ export async function simulateTestPaymentFailure(mandateId: number, confirmation
   return { orderId, cartPreserved: true, automaticRetry: false, message: "Test payment failed safely. No charge was attempted, the cart remains available for review, and BazaarOS will not retry automatically." };
 }
 
-export async function getDemoOverview() {
-  const merchant = await loadDemoMerchant();
+export async function getDemoOverview(merchantSlug?: string) {
+  const merchant = await loadDemoMerchant(merchantSlug);
   const catalog = await loadCatalog(merchant.id);
   return {
     merchant: { id: merchant.id, name: merchant.name, slug: merchant.slug },

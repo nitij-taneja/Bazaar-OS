@@ -12,6 +12,7 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "db:seed": "node scripts/seed-bazaar-catalog.mjs",
+    "db:seed:demo": "node scripts/seed-demo-merchants.mjs",
     "db:reindex": "node scripts/reindex-product-embeddings.mjs"
   },
   "dependencies": {

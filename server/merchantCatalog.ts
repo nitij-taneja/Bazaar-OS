@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { auditEvents, catalogSources, checkoutMandates, checkoutOrders, paymentEvents, productEmbeddings, productFacts, productOperationalOverlays, products } from "../drizzle/schema";
+import { agentRuns, agentSteps, auditEvents, catalogSources, checkoutMandates, checkoutOrders, commerceIntents, paymentEvents, productEmbeddings, productFacts, productOperationalOverlays, products } from "../drizzle/schema";
 import { clearEmbeddingQueryCache, embedDocuments, embeddingInputSha256, EMBEDDING_MODEL } from "./embeddings";
 import { getDb } from "./db";
 
@@ -119,4 +119,102 @@ export async function reindexMerchantCatalog(merchantId: number, actorUserId: nu
   } catch {
     return { indexed: 0, failedProductIds: [], model: EMBEDDING_MODEL };
   }
+}
+
+/**
+ * Real, rule-based growth insights computed from actually-persisted agent
+ * run history — not a machine-learned model, not fabricated. A product
+ * recommended repeatedly (agentSteps where agentName="offer" named it the
+ * primary candidate) that rarely reaches a mandate (the run's final status
+ * wasn't "blocked") is flagged with a documented, fixed threshold. Nothing
+ * here adjusts itself automatically; every suggestion requires the merchant
+ * to explicitly approve it via applyGrowthPriceSuggestion.
+ */
+export async function getMerchantGrowthInsights(merchantId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    const runs = await db
+      .select({ runId: agentRuns.id, status: agentRuns.status })
+      .from(agentRuns)
+      .innerJoin(commerceIntents, eq(commerceIntents.id, agentRuns.intentId))
+      .where(eq(commerceIntents.merchantId, merchantId))
+      .orderBy(desc(agentRuns.id))
+      .limit(300);
+
+    if (runs.length === 0) return [];
+    const runIds = runs.map(r => r.runId);
+    const runStatusById = new Map(runs.map(r => [r.runId, r.status]));
+
+    const offerSteps = await db
+      .select({ runId: agentSteps.runId, outputSummary: agentSteps.outputSummary })
+      .from(agentSteps)
+      .where(and(inArray(agentSteps.runId, runIds), eq(agentSteps.agentName, "offer")));
+
+    const productStats = new Map<number, { impressions: number; mandateReached: number }>();
+    for (const step of offerSteps) {
+      const output = step.outputSummary as { primaryProductId?: number } | null;
+      const productId = output?.primaryProductId;
+      if (!productId) continue;
+      const stat = productStats.get(productId) ?? { impressions: 0, mandateReached: 0 };
+      stat.impressions += 1;
+      const status = runStatusById.get(step.runId);
+      if (status && status !== "blocked" && status !== "failed") stat.mandateReached += 1;
+      productStats.set(productId, stat);
+    }
+
+    if (productStats.size === 0) return [];
+
+    const productIds = Array.from(productStats.keys());
+    const productRows = await db.select({ id: products.id, title: products.title }).from(products).where(inArray(products.id, productIds));
+    const titleById = new Map(productRows.map(p => [p.id, p.title]));
+
+    const overlays = await db.select({ productId: productOperationalOverlays.productId, testPriceInrPaise: productOperationalOverlays.testPriceInrPaise }).from(productOperationalOverlays).where(inArray(productOperationalOverlays.productId, productIds));
+    const priceById = new Map(overlays.map(o => [o.productId, o.testPriceInrPaise]));
+
+    const insights: Array<{
+      productId: number;
+      title: string;
+      impressions: number;
+      mandateReachedCount: number;
+      mandateRatePercent: number;
+      currentPriceInrPaise: number;
+      suggestedPriceInrPaise: number;
+      rule: string;
+      suggestion: string;
+    }> = [];
+
+    for (const [productId, stat] of Array.from(productStats.entries())) {
+      const mandateRate = stat.impressions > 0 ? stat.mandateReached / stat.impressions : 0;
+      // Fixed, documented threshold — not learned, not hidden.
+      if (stat.impressions >= 2 && mandateRate < 0.5) {
+        const currentPrice = priceById.get(productId) ?? 0;
+        insights.push({
+          productId,
+          title: titleById.get(productId) ?? `Product ${productId}`,
+          impressions: stat.impressions,
+          mandateReachedCount: stat.mandateReached,
+          mandateRatePercent: Math.round(mandateRate * 100),
+          currentPriceInrPaise: currentPrice,
+          suggestedPriceInrPaise: Math.round(currentPrice * 0.9),
+          rule: "Recommended as the top candidate in ≥2 recent runs, but reached a mandate in under half of them.",
+          suggestion: "Consider a 10% price adjustment to improve conversion.",
+        });
+      }
+    }
+
+    return insights.sort((a, b) => a.mandateRatePercent - b.mandateRatePercent);
+  } catch {
+    return [];
+  }
+}
+
+export async function applyGrowthPriceSuggestion(input: { merchantId: number; actorUserId: number; productId: number; newPriceInrPaise: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("BazaarOS database is unavailable.");
+  const owned = await db.select({ id: products.id }).from(products).where(and(eq(products.id, input.productId), eq(products.merchantId, input.merchantId))).limit(1);
+  if (!owned[0]) throw new Error("This product does not belong to the requesting merchant.");
+  await db.update(productOperationalOverlays).set({ testPriceInrPaise: input.newPriceInrPaise, updatedAt: new Date() }).where(eq(productOperationalOverlays.productId, input.productId));
+  await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.growth_suggestion_applied", { productId: input.productId, newPriceInrPaise: input.newPriceInrPaise });
+  return { applied: true as const, productId: input.productId, newPriceInrPaise: input.newPriceInrPaise };
 }

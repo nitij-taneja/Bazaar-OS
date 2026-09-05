@@ -1,21 +1,29 @@
 import { z } from "zod";
-import { approveMandate, getDemoOverview, runCommerceAgent, simulateTestPaymentFailure, updateMerchantInventory, verifyCheckoutPayment } from "./bazaar";
+import { approveMandate, getDemoOverview, getRecentAgentActivity, listKnownMerchantSlugs, runCommerceAgent, simulateTestPaymentFailure, updateMerchantInventory, verifyCheckoutPayment } from "./bazaar";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { loadDemoMerchant } from "./bazaar";
 import { synthesizeOrpheusBrief, transcribeGroqVoice } from "./voice";
 import { analyzeStyleReference } from "./vision";
 import { enforceRateLimit, requestIdentity } from "./rateLimit";
-import { createMerchantCatalogProducts, getRecentPaymentStatus, reindexMerchantCatalog, updateMerchantCatalogProduct } from "./merchantCatalog";
+import { applyGrowthPriceSuggestion, createMerchantCatalogProducts, getMerchantGrowthInsights, getRecentPaymentStatus, reindexMerchantCatalog, updateMerchantCatalogProduct } from "./merchantCatalog";
 
 function limit(ctx: { req: { headers?: Record<string, unknown> } }, route: string, max: number, windowMs: number) {
   enforceRateLimit(`${route}:${requestIdentity(ctx.req.headers)}`, { max, windowMs });
 }
 
 export const commerceRouter = router({
-  overview: publicProcedure.query(() => getDemoOverview()),
-  agentCard: publicProcedure.query(async () => {
-    const merchant = await loadDemoMerchant();
+  overview: publicProcedure
+    .input(z.object({ merchantSlug: z.string().max(80).optional() }).optional())
+    .query(({ input }) => getDemoOverview(input?.merchantSlug)),
+  knownMerchants: publicProcedure.query(() => listKnownMerchantSlugs()),
+  recentActivity: publicProcedure
+    .input(z.object({ limit: z.number().int().min(1).max(50).optional() }).optional())
+    .query(({ input }) => getRecentAgentActivity(input?.limit ?? 12)),
+  agentCard: publicProcedure
+    .input(z.object({ merchantSlug: z.string().max(80).optional() }).optional())
+    .query(async ({ input }) => {
+    const merchant = await loadDemoMerchant(input?.merchantSlug);
     return {
       schemaVersion: "bazaaros.agent-card.v1",
       merchant: { id: merchant.id, name: merchant.name, slug: merchant.slug },
@@ -37,6 +45,18 @@ export const commerceRouter = router({
     if (ctx.user.role !== "admin" && ctx.user.id !== merchant.ownerId) throw new TRPCError({ code: "FORBIDDEN", message: "Only this merchant’s operator can view payment status." });
     return getRecentPaymentStatus(merchant.id);
   }),
+  growthInsights: protectedProcedure.query(async ({ ctx }) => {
+    const merchant = await loadDemoMerchant();
+    if (ctx.user.role !== "admin" && ctx.user.id !== merchant.ownerId) throw new TRPCError({ code: "FORBIDDEN", message: "Only this merchant’s operator can view growth insights." });
+    return getMerchantGrowthInsights(merchant.id);
+  }),
+  applyGrowthSuggestion: protectedProcedure
+    .input(z.object({ productId: z.number().int().positive(), newPriceInrPaise: z.number().int().positive() }))
+    .mutation(async ({ input, ctx }) => {
+      const merchant = await loadDemoMerchant();
+      if (ctx.user.role !== "admin" && ctx.user.id !== merchant.ownerId) throw new TRPCError({ code: "FORBIDDEN", message: "Only this merchant’s operator can apply a growth suggestion." });
+      return applyGrowthPriceSuggestion({ merchantId: merchant.id, actorUserId: ctx.user.id, productId: input.productId, newPriceInrPaise: input.newPriceInrPaise });
+    }),
   createCatalogProducts: protectedProcedure
     .input(z.object({ rows: z.array(z.object({ title: z.string().trim().min(2).max(220), brand: z.string().trim().max(160).optional(), description: z.string().trim().max(2000).optional(), imageUrl: z.string().url().max(2000).optional(), priceInr: z.number().positive().max(500000), inventory: z.number().int().min(0).max(9999), deliveryCities: z.array(z.string().trim().min(2).max(60)).min(1).max(12), deliveryEtaText: z.string().trim().min(3).max(160), styleTags: z.array(z.string().trim().min(2).max(30)).min(1).max(8), occasionTags: z.array(z.string().trim().min(2).max(30)).min(1).max(8) })).min(1).max(50) }))
     .mutation(async ({ input, ctx }) => {
@@ -70,6 +90,7 @@ export const commerceRouter = router({
       includeImage: z.boolean().default(false),
       imageStyleTags: z.array(z.string().min(1).max(30)).max(6).optional(),
       authorityScope: z.string().max(100).optional(),
+      merchantSlug: z.string().max(80).optional(),
     }))
     .mutation(({ input, ctx }) => { limit(ctx, "commerce-run", 12, 60_000); return runCommerceAgent(input); }),
   approveMandate: publicProcedure

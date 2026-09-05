@@ -113,6 +113,7 @@ export default function LandingPage() {
           <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Capabilities</a>
             <a href="#architecture" className="hover:text-foreground transition-colors">7 Autonomous Nodes</a>
+            <a href="#decision-log" className="hover:text-foreground transition-colors">Decision Log</a>
             <a href="#trust" className="hover:text-foreground transition-colors">Trust & Safety</a>
             <a href="#agent-auth" className="hover:text-foreground transition-colors">AI Buyer Auth & API</a>
             <a href="#faq" className="hover:text-foreground transition-colors">Rationale & FAQs</a>
@@ -471,6 +472,71 @@ export default function LandingPage() {
               </div>
               <h4 className="text-sm font-bold text-foreground">{node.name}</h4>
               <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">{node.role}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Architectural Decision Log Section */}
+      <section id="decision-log" className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 border-t border-border">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <Badge className="border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-xs font-mono mb-3">
+            ARCHITECTURAL DECISION LOG
+          </Badge>
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl">
+            First-Principles Justification Behind Every Layer
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Every real run produces a receipt like this — the model, retrieval, and safety route actually used, and why the alternatives were rejected. Example below; run it live in the Studio for your own query.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            {
+              layer: "Model Route",
+              selected: "Groq structured intent extraction (deterministic fallback if unavailable)",
+              reason: "Catalog facts never leave the backend for this model call; price, stock, and payment fields stay deterministic regardless of model output.",
+              icon: BrainCircuit,
+            },
+            {
+              layer: "Chunking",
+              selected: "One product record per retrieval unit",
+              reason: "Title, price overlay, delivery overlay, and provenance must stay joined for an auditable commerce answer — never split across arbitrary chunks.",
+              icon: Layers,
+            },
+            {
+              layer: "Retrieval",
+              selected: "Hard filters first, then BGE vector rank (lexical fallback if embeddings unavailable)",
+              reason: "Semantic relevance can never override budget, stock, or delivery truth — hard constraints always run before ranking.",
+              icon: ScanSearch,
+            },
+            {
+              layer: "Vision/OCR",
+              selected: "Invoked only when a style-reference image is attached",
+              reason: "No vision call — and no cost — is made unless the customer actually supplies an image; nothing is inferred from thin air.",
+              icon: Radar,
+            },
+            {
+              layer: "Payment Safety",
+              selected: "Draft mandate only, never a direct provider call",
+              reason: "Policy requires item availability, an amount bound, an idempotency key, and explicit customer confirmation before Razorpay is ever touched.",
+              icon: ShieldCheck,
+            },
+            {
+              layer: "Trust Gateway",
+              selected: "100% deterministic code, zero LLM discretion",
+              reason: "Verified live: an external agent that omits its authority scope is still hard-capped server-side — it cannot self-declare human presence to escalate.",
+              icon: LockKeyhole,
+            },
+          ].map(item => (
+            <div key={item.layer} className="rounded-2xl border border-border bg-card/70 p-4.5 backdrop-blur-xl shadow-xs">
+              <div className="flex items-center gap-2 mb-2">
+                <item.icon size={16} className="text-cyan-600 dark:text-cyan-400" />
+                <span className="text-xs font-bold text-foreground uppercase tracking-wide">{item.layer}</span>
+              </div>
+              <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-1.5">{item.selected}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{item.reason}</p>
             </div>
           ))}
         </div>

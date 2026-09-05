@@ -47,6 +47,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AgentName, AgentTracePanel, PipelineVisualizer } from "@/components/BazaarPipeline";
+import { AgentActivityFeed } from "@/components/AgentActivityFeed";
 import { useTheme } from "@/contexts/ThemeContext";
 import { trpc } from "@/lib/trpc";
 
@@ -811,6 +812,9 @@ export default function Home() {
 
             {/* Live Pipeline Visualizer (The Jarvis Mesh) */}
             <PipelineVisualizer traces={run?.traces ?? []} activeAgent={activeAgent} selectedAgent={selectedAgent} onSelect={setSelectedAgent} />
+
+            {/* Live feed of any caller's real activity — browser, external script, or a genuine third-party agent */}
+            <AgentActivityFeed />
           </div>
 
           {/* Right Column: Active Agent Trace + Trust Gateway */}
