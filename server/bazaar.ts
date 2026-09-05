@@ -474,8 +474,8 @@ export async function loadCatalogWithCache(merchantId: number): Promise<{ catalo
         catalogCache.set(merchantId, { catalog, expiresAt: Date.now() + CATALOG_CACHE_TTL_MS });
         return { catalog, cache: "miss" };
       }
-    } catch {
-      // fallback below
+    } catch (error) {
+      console.error("[Catalog] Database query failed; falling back to in-memory demo catalog:", error);
     }
   }
   const catalog = loadFallbackCatalog();
@@ -564,8 +564,8 @@ export async function loadMarketplaceCatalog(): Promise<{ catalog: MarketplaceCa
         marketplaceCatalogCache = { catalog, expiresAt: Date.now() + marketplaceCatalogCacheTTLMs };
         return { catalog, cache: "miss" };
       }
-    } catch {
-      // fallback below
+    } catch (error) {
+      console.error("[Marketplace] Database query failed; falling back to in-memory single-merchant demo catalog:", error);
     }
   }
   const fallbackMerchant = DEMO_MERCHANT_FALLBACKS.novacart;
