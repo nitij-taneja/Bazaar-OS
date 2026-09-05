@@ -139,6 +139,12 @@ function ProductCard({ product, selected, onSelect }: { product: any; selected: 
         <p className="line-clamp-2 min-h-10 text-xs font-semibold leading-relaxed text-foreground group-hover:text-primary">
           {product.title}
         </p>
+        {product.reasons?.length ? (
+          <p className="mt-1.5 line-clamp-2 text-[10px] leading-snug text-muted-foreground">
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Why this: </span>
+            {(product.reasons as string[]).filter((r: string) => !r.startsWith("No ")).slice(0, 2).join(" ") || product.reasons[0]}
+          </p>
+        ) : null}
         <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-border pt-2.5">
           <div>
             <p className="text-sm font-bold text-foreground font-mono">{currency(product.testPriceInrPaise)}</p>
@@ -158,10 +164,13 @@ export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [query, setQuery] = useState(presetScenarios[0].query);
   const [refineText, setRefineText] = useState("");
+  const [checkInDismissed, setCheckInDismissed] = useState(false);
+  const refineInputRef = useRef<HTMLInputElement | null>(null);
   const [workspace, setWorkspace] = useState<"shop" | "mesh" | "audit" | "models" | "merchant">("shop");
   const [failureOutcome, setFailureOutcome] = useState<string | null>(null);
   const [channel, setChannel] = useState<"text" | "voice" | "image" | "a2a">("text");
   const [marketplaceMode, setMarketplaceMode] = useState(false);
+  const [showTechnicalView, setShowTechnicalView] = useState(false);
   const [imageAttached, setImageAttached] = useState(false);
   const [imageAnalysis, setImageAnalysis] = useState<any>(null);
   const [voiceMode, setVoiceMode] = useState(false);
@@ -371,6 +380,7 @@ export default function Home() {
     if (textToRun.trim().length < 3) return setNotice("Please describe what you are looking for before starting the agent mesh.");
     setNotice(null);
     setFailureOutcome(null);
+    setCheckInDismissed(false);
     if (marketplaceMode) {
       runMarketplaceMutation.mutate({
         query: textToRun,
@@ -391,9 +401,10 @@ export default function Home() {
     });
   };
 
-  const doRefine = () => {
-    if (refineText.trim().length < 2) return;
-    const combinedQuery = `${query.trim()}. Additional constraint: ${refineText.trim()}`;
+  const doRefine = (overrideText?: string) => {
+    const text = (overrideText ?? refineText).trim();
+    if (text.length < 2) return;
+    const combinedQuery = `${query.trim()}. Additional constraint: ${text}`;
     setQuery(combinedQuery);
     setRefineText("");
     doRun(combinedQuery);
@@ -744,6 +755,18 @@ export default function Home() {
                     <Bot size={14} className={channel === "a2a" ? "text-emerald-600 dark:text-emerald-400" : ""} />
                     <span>{channel === "a2a" ? "A2A Buyer Mode (Active)" : "Simulate A2A Buyer"}</span>
                   </button>
+                  <button
+                    onClick={() => setShowTechnicalView(!showTechnicalView)}
+                    className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all ${
+                      showTechnicalView
+                        ? "border-violet-500/50 bg-violet-500/15 text-violet-700 dark:text-violet-300 ring-1 ring-violet-400 shadow-xs"
+                        : "border-border bg-muted/50 text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="Toggle the full agent-mesh, trust-gateway, and decision-log inspector view"
+                  >
+                    <Eye size={14} className={showTechnicalView ? "text-violet-600 dark:text-violet-400" : ""} />
+                    <span>{showTechnicalView ? "Inspector View (On)" : "Inspect Agent Reasoning"}</span>
+                  </button>
                 </div>
               </div>
 
@@ -875,61 +898,84 @@ export default function Home() {
               ) : null}
             </section>
 
-            {/* Live Pipeline Visualizer (The Jarvis Mesh) */}
-            <PipelineVisualizer traces={run?.traces ?? []} activeAgent={activeAgent} selectedAgent={selectedAgent} onSelect={setSelectedAgent} />
+            {showTechnicalView ? (
+              <>
+                {/* Live Pipeline Visualizer (The Jarvis Mesh) */}
+                <PipelineVisualizer traces={run?.traces ?? []} activeAgent={activeAgent} selectedAgent={selectedAgent} onSelect={setSelectedAgent} />
 
-            {/* Live feed of any caller's real activity — browser, external script, or a genuine third-party agent */}
-            <AgentActivityFeed />
+                {/* Live feed of any caller's real activity — browser, external script, or a genuine third-party agent */}
+                <AgentActivityFeed />
+              </>
+            ) : null}
           </div>
 
-          {/* Right Column: Active Agent Trace + Trust Gateway */}
+          {/* Right Column: Active Agent Trace + Trust Gateway (full detail in inspector view; a simple reassurance badge otherwise) */}
           <div className="space-y-6">
-            <AgentTracePanel trace={selectedTrace} decision={selectedDecision} />
+            {showTechnicalView ? (
+              <>
+                <AgentTracePanel trace={selectedTrace} decision={selectedDecision} />
 
-            {/* Deterministic Trust Gateway Cockpit */}
-            <section className="rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="grid size-8 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-300">
-                    <LockKeyhole size={16} />
+                {/* Deterministic Trust Gateway Cockpit */}
+                <section className="rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
+                  <div className="flex items-center justify-between border-b border-border pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="grid size-8 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-300">
+                        <LockKeyhole size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-foreground uppercase">Trust Gateway Policy</p>
+                        <p className="text-[10px] text-muted-foreground">100% Deterministic • Zero LLM Discretion</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 text-[9px] font-mono">
+                      GATED PROTOCOL
+                    </Badge>
+                  </div>
+
+                  <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                    The Trust Gateway prevents money-loss bugs, hallucinations, and unauthorized agent charges by enforcing hard runtime gates:
+                  </p>
+
+                  <div className="mt-3.5 space-y-2">
+                    {[
+                      { label: "Product Inventory Available", pass: Boolean(selectedProduct?.testInventory && selectedProduct.testInventory > 0) },
+                      { label: "Delivery City Serviceable", pass: Boolean(selectedProduct?.deliveryCities?.length) },
+                      { label: "Single Checkout Limit (≤ ₹5,000)", pass: Boolean(!run?.mandate || run.mandate.amountInrPaise <= 500000) },
+                      { label: "Explicit Customer Confirmation", pass: Boolean(run?.mandate?.status === "approved") },
+                    ].map(item => (
+                      <div key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-card/50 px-3 py-2.5">
+                        <span className="text-xs text-foreground">{item.label}</span>
+                        <span
+                          className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-mono font-bold ${
+                            item.pass
+                              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
+                              : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                          }`}
+                        >
+                          {item.pass ? <Check size={11} /> : <Clock3 size={11} />}
+                          <span>{item.pass ? "PASSED" : "REQUIRED"}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            ) : (
+              <section className="rounded-[26px] border border-emerald-500/20 bg-emerald-500/[0.05] p-5 shadow-lg backdrop-blur-2xl">
+                <div className="flex items-center gap-2.5">
+                  <div className="grid size-9 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-300">
+                    <LockKeyhole size={17} />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-foreground uppercase">Trust Gateway Policy</p>
-                    <p className="text-[10px] text-muted-foreground">100% Deterministic • Zero LLM Discretion</p>
+                    <p className="text-sm font-bold text-foreground">Your payments are protected</p>
+                    <p className="text-[11px] text-muted-foreground">Stock, budget, and delivery are checked automatically. Nothing is ever charged without your explicit confirmation.</p>
                   </div>
                 </div>
-                <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 text-[9px] font-mono">
-                  GATED PROTOCOL
-                </Badge>
-              </div>
-
-              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                The Trust Gateway prevents money-loss bugs, hallucinations, and unauthorized agent charges by enforcing hard runtime gates:
-              </p>
-
-              <div className="mt-3.5 space-y-2">
-                {[
-                  { label: "Product Inventory Available", pass: Boolean(selectedProduct?.testInventory && selectedProduct.testInventory > 0) },
-                  { label: "Delivery City Serviceable", pass: Boolean(selectedProduct?.deliveryCities?.length) },
-                  { label: "Single Checkout Limit (≤ ₹5,000)", pass: Boolean(!run?.mandate || run.mandate.amountInrPaise <= 500000) },
-                  { label: "Explicit Customer Confirmation", pass: Boolean(run?.mandate?.status === "approved") },
-                ].map(item => (
-                  <div key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-card/50 px-3 py-2.5">
-                    <span className="text-xs text-foreground">{item.label}</span>
-                    <span
-                      className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-mono font-bold ${
-                        item.pass
-                          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
-                          : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20"
-                      }`}
-                    >
-                      {item.pass ? <Check size={11} /> : <Clock3 size={11} />}
-                      <span>{item.pass ? "PASSED" : "REQUIRED"}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </section>
+                <button onClick={() => setShowTechnicalView(true)} className="mt-3 flex items-center gap-1 text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">
+                  <Eye size={12} /> See exactly how this is verified
+                </button>
+              </section>
+            )}
           </div>
         </div>
 
@@ -959,17 +1005,40 @@ export default function Home() {
               ))}
             </div>
 
+            {run?.candidates?.length && !checkInDismissed ? (
+              <div className="mt-4 rounded-xl border border-cyan-500/30 bg-cyan-500/[0.06] p-3">
+                <p className="text-xs font-semibold text-foreground">
+                  Does {products[0]?.title ? <span className="text-cyan-700 dark:text-cyan-300">"{products[0].title.slice(0, 40)}{products[0].title.length > 40 ? "…" : ""}"</span> : "this"} work for you, or would you like to see other options?
+                </p>
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setCheckInDismissed(true)} className="h-7 text-[11px]">
+                    👍 Yes, this works
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => doRefine("show cheaper alternatives, lower price only")} disabled={isRunPending} className="h-7 text-[11px]">
+                    💰 Show cheaper options
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => doRefine("show premium, higher-quality alternatives")} disabled={isRunPending} className="h-7 text-[11px]">
+                    ✨ Show premium options
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => refineInputRef.current?.focus()} className="h-7 text-[11px]">
+                    🔄 Something different
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+
             {run?.candidates?.length ? (
-              <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-2.5">
+              <div className="mt-3 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-2.5">
                 <Filter size={14} className="shrink-0 text-muted-foreground" />
                 <Input
+                  ref={refineInputRef}
                   value={refineText}
                   onChange={event => setRefineText(event.target.value)}
                   onKeyDown={event => event.key === "Enter" && doRefine()}
-                  placeholder="Not quite right? Refine further — e.g. only leather ones, or under ₹1500"
+                  placeholder="Tell me what's different about what you need — e.g. only leather ones, or under ₹1500"
                   className="h-8 border-none bg-transparent text-xs shadow-none focus-visible:ring-0"
                 />
-                <Button size="sm" onClick={doRefine} disabled={isRunPending || refineText.trim().length < 2} className="h-8 shrink-0 text-xs">
+                <Button size="sm" onClick={() => doRefine()} disabled={isRunPending || refineText.trim().length < 2} className="h-8 shrink-0 text-xs">
                   Refine
                 </Button>
               </div>
@@ -1038,11 +1107,20 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <Badge variant="outline" className="font-mono text-[10px]">
-                max 6% self-discount · single round
-              </Badge>
+              {showTechnicalView ? (
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  max 6% self-discount · single round
+                </Badge>
+              ) : null}
             </div>
 
+            {!showTechnicalView ? (
+              <p className="mt-4 text-xs text-muted-foreground">
+                ✓ Compared <strong className="text-foreground">{run.bids.length} sellers</strong> for this item —{" "}
+                <strong className="text-emerald-600 dark:text-emerald-400">{run.bids.find((b: any) => b.won)?.merchantName ?? "the winner"}</strong> had the best overall match on price, fit, and delivery.{" "}
+                <button onClick={() => setShowTechnicalView(true)} className="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">See every seller's offer</button>
+              </p>
+            ) : (
             <div className="mt-4 space-y-2">
               {run.bids
                 .slice()
@@ -1089,12 +1167,14 @@ export default function Home() {
                   </div>
                 ))}
             </div>
+            )}
           </section>
         ) : null}
 
         {/* Checkout Mandate & Safe Failure Execution Cockpit */}
-        <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.8fr)]">
+        <section className={`mt-6 grid gap-6 ${showTechnicalView ? "xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.8fr)]" : ""}`}>
           {/* Decision Intelligence Architecture */}
+          {showTechnicalView ? (
           <section className="rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
@@ -1140,6 +1220,7 @@ export default function Home() {
               ))}
             </div>
           </section>
+          ) : null}
 
           {/* Checkout Mandate Box */}
           <section className="rounded-[26px] border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 to-card dark:from-emerald-950/30 dark:to-[#080d1e] p-5 shadow-lg backdrop-blur-2xl">
