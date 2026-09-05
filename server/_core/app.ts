@@ -7,7 +7,6 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { serveStatic } from "./vite";
 import { databaseWebhookStore, processRazorpayWebhook } from "../paymentWebhook";
 
 /**
@@ -46,7 +45,13 @@ export async function createApp(): Promise<Express> {
 
   // Local dev wires up Vite's dev middleware itself (see server/_core/index.ts);
   // Vercel serves dist/public directly via its CDN, not through this function.
+  // Dynamic import so the Vite toolchain (a devDependency) is never pulled
+  // into the Vercel serverless bundle at all -- a static top-level import
+  // here previously loaded vite.config.ts (and vite/@vitejs/plugin-react/etc.)
+  // unconditionally, which crashed the deployed function even though this
+  // branch never ran on Vercel.
   if (!process.env.VERCEL && process.env.NODE_ENV !== "development") {
+    const { serveStatic } = await import("./vite");
     serveStatic(app);
   }
 
