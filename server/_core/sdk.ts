@@ -2,11 +2,17 @@ import { AXIOS_TIMEOUT_MS, COOKIE_NAME, ONE_YEAR_MS, decodeOAuthState } from "@s
 import { ForbiddenError } from "@shared/_core/errors";
 import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
-import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
+
+// Narrower than express.Request on purpose: authenticateRequest only ever
+// reads headers, and pinning to the full Express Request generic signature
+// has proven brittle across environments where @types/express resolves to
+// a slightly different shape (build succeeded regardless; this just keeps
+// the check clean without depending on that resolution).
+type RequestWithHeaders = { headers: Record<string, string | string[] | undefined> };
 import type {
   ExchangeTokenRequest,
   ExchangeTokenResponse,
@@ -255,9 +261,10 @@ class SDKServer {
     } as GetUserInfoWithJwtResponse;
   }
 
-  async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
+  async authenticateRequest(req: RequestWithHeaders): Promise<AuthenticatedUser> {
     // 1. Prefer the session cookie (regular OAuth login).
-    const cookies = this.parseCookies(req.headers.cookie);
+    const cookieHeader = Array.isArray(req.headers.cookie) ? req.headers.cookie[0] : req.headers.cookie;
+    const cookies = this.parseCookies(cookieHeader);
     let sessionToken = cookies.get(COOKIE_NAME);
 
     // 2. Fallback to the Authorization header (Preview auto-login via
