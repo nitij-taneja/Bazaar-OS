@@ -440,7 +440,14 @@ export async function runCommerceAgent(input: { query: string; channel: Channel;
     }
   }
 
-  const authorityScope = input.authorityScope ?? "HUMAN_PRESENT_CONFIRMATION_REQUIRED";
+  // Authority is derived from the server-known channel, never trusted from
+  // client input: an a2a-labeled caller cannot self-declare human presence
+  // to escalate past SEARCH_AND_QUOTE_ONLY, regardless of what authorityScope
+  // it passes. (Residual gap: a caller can still mislabel channel itself as
+  // "text" to claim human authority — closing that fully requires binding
+  // HUMAN_PRESENT_CONFIRMATION_REQUIRED to an authenticated browser session
+  // rather than a request field, which is out of scope for this pass.)
+  const authorityScope = input.channel === "a2a" ? "SEARCH_AND_QUOTE_ONLY" : "HUMAN_PRESENT_CONFIRMATION_REQUIRED";
   const traces: AgentTrace[] = [];
 
   traces.push(trace(
