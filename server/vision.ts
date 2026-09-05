@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
 
 const maxImageBytes = 8 * 1024 * 1024;
@@ -62,6 +61,55 @@ async function tryGroqVision(imageDataUrl: string): Promise<{ styleTags: string[
   return null;
 }
 
+async function tryGeminiVision(mimeType: string, base64: string): Promise<{ styleTags: string[]; visualSummary: string; confidence: number } | null> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return null;
+  const model = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            {
+              text: "Analyze this product or style reference image. Identify only visible non-sensitive style attributes. Do not identify people, estimate demographic traits, infer brand authenticity, price, stock, delivery, or merchant availability. Return 3-6 concise lowercase style tags describing category, material, color, and aesthetic, a one-sentence visual summary for catalog search, and a confidence score from 0 to 1.",
+            },
+            { inline_data: { mime_type: mimeType, data: base64 } },
+          ],
+        }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              styleTags: { type: "ARRAY", items: { type: "STRING" }, minItems: 3, maxItems: 6 },
+              visualSummary: { type: "STRING" },
+              confidence: { type: "NUMBER" },
+            },
+            required: ["styleTags", "visualSummary", "confidence"],
+          },
+        },
+      }),
+    });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    const text = payload?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (typeof text !== "string") return null;
+    const parsed = JSON.parse(text);
+    if (Array.isArray(parsed.styleTags) && typeof parsed.visualSummary === "string") {
+      return {
+        styleTags: parsed.styleTags.filter((t: any) => typeof t === "string"),
+        visualSummary: parsed.visualSummary,
+        confidence: Number(parsed.confidence) || 0.85,
+      };
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 export async function analyzeStyleReference(input: { imageDataUrl: string }) {
   const { mimeType, buffer } = decodeImage(input.imageDataUrl);
   const extension = mimeType.split("/")[1] || "png";
@@ -87,51 +135,19 @@ export async function analyzeStyleReference(input: { imageDataUrl: string }) {
     };
   }
 
-  // 2. Try Forge / Gemini Vision
-  try {
-    const response = await invokeLLM({
-      model: "gemini-3-flash-preview",
-      messages: [
-        { role: "system", content: "You analyze a user-provided fashion or gifting style reference. Identify only visible non-sensitive style attributes. Do not identify people, estimate demographic traits, infer brand authenticity, price, stock, delivery, or merchant availability. Output JSON only." },
-        { role: "user", content: [
-          { type: "text", text: "Extract three to six concise style tags plus a one-sentence visual summary for catalog search." },
-          { type: "image_url", image_url: { url: input.imageDataUrl, detail: "low" } },
-        ] },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "style_reference_analysis",
-          strict: true,
-          schema: {
-            type: "object",
-            properties: {
-              styleTags: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 6 },
-              visualSummary: { type: "string", maxLength: 240 },
-              confidence: { type: "number", minimum: 0, maximum: 1 },
-            },
-            required: ["styleTags", "visualSummary", "confidence"],
-            additionalProperties: false,
-          },
-        },
+  // 2. Try direct Google Gemini Vision (real API call, no Manus dependency)
+  const geminiVision = await tryGeminiVision(mimeType, buffer.toString("base64"));
+  if (geminiVision && geminiVision.styleTags.length > 0) {
+    return {
+      ...geminiVision,
+      imageUrl: stored.url,
+      imageKey: stored.key,
+      decision: {
+        model: process.env.GEMINI_MODEL ?? "gemini-3.6-flash",
+        reason: "Analyzed visual category, materials, and aesthetic attributes via Google Gemini Vision.",
+        scope: "Visible non-sensitive visual attributes only; zero price/inventory hallucination.",
       },
-    });
-    const content = response.choices[0]?.message?.content;
-    if (typeof content === "string") {
-      const parsed = JSON.parse(content) as { styleTags: string[]; visualSummary: string; confidence: number };
-      return {
-        ...parsed,
-        imageUrl: stored.url,
-        imageKey: stored.key,
-        decision: {
-          model: "gemini-3-flash-preview",
-          reason: "Selected as lower-latency multimodal route for single image style extraction.",
-          scope: "Visible non-sensitive visual attributes only; zero price/inventory hallucination.",
-        },
-      };
-    }
-  } catch {
-    // Fallback
+    };
   }
 
   // 3. Smart visual heuristic fallback based on base64 attributes & length
