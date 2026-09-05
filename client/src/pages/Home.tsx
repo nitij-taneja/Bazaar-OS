@@ -142,7 +142,7 @@ function ProductCard({ product, selected, onSelect }: { product: any; selected: 
         <div className="mt-2.5 flex items-end justify-between gap-2 border-t border-border pt-2.5">
           <div>
             <p className="text-sm font-bold text-foreground font-mono">{currency(product.testPriceInrPaise)}</p>
-            <p className="text-[9px] text-muted-foreground">NovaCart Verified SKU</p>
+            <p className="text-[9px] text-muted-foreground">{product.merchantName ? `${product.merchantName} · Verified SKU` : "NovaCart Verified SKU"}</p>
           </div>
           <div className="flex items-center gap-1 text-[10px] font-semibold text-cyan-600 dark:text-cyan-300">
             <span>View</span>
@@ -161,6 +161,7 @@ export default function Home() {
   const [workspace, setWorkspace] = useState<"shop" | "mesh" | "audit" | "models" | "merchant">("shop");
   const [failureOutcome, setFailureOutcome] = useState<string | null>(null);
   const [channel, setChannel] = useState<"text" | "voice" | "image" | "a2a">("text");
+  const [marketplaceMode, setMarketplaceMode] = useState(false);
   const [imageAttached, setImageAttached] = useState(false);
   const [imageAnalysis, setImageAnalysis] = useState<any>(null);
   const [voiceMode, setVoiceMode] = useState(false);
@@ -198,21 +199,35 @@ export default function Home() {
   const overview = trpc.commerce.overview.useQuery();
   const merchantCatalog = trpc.commerce.merchantCatalog.useQuery(undefined, { enabled: workspace === "merchant", retry: false });
 
+  const applyRunResult = (data: any) => {
+    setRun(data);
+    setOrderSuccess(null);
+    setSelectedProductId(data.candidates?.[0]?.id ?? null);
+    timers.current.forEach(window.clearTimeout);
+    data.traces.forEach((trace: any, index: number) => {
+      timers.current.push(
+        window.setTimeout(() => {
+          setActiveAgent(trace.agentName);
+          setSelectedAgent(trace.agentName);
+        }, index * 520)
+      );
+    });
+    timers.current.push(window.setTimeout(() => setActiveAgent(null), data.traces.length * 520 + 280));
+  };
+
   const runMutation = trpc.commerce.run.useMutation({
-    onSuccess: data => {
-      setRun(data);
-      setOrderSuccess(null);
-      setSelectedProductId(data.candidates?.[0]?.id ?? null);
-      timers.current.forEach(window.clearTimeout);
-      data.traces.forEach((trace: any, index: number) => {
-        timers.current.push(
-          window.setTimeout(() => {
-            setActiveAgent(trace.agentName);
-            setSelectedAgent(trace.agentName);
-          }, index * 520)
-        );
-      });
-      timers.current.push(window.setTimeout(() => setActiveAgent(null), data.traces.length * 520 + 280));
+    onSuccess: applyRunResult,
+    onError: error => setNotice(error.message),
+  });
+
+  const runMarketplaceMutation = trpc.commerce.runMarketplace.useMutation({
+    onSuccess: (data: any) => {
+      applyRunResult(data);
+      setNotice(
+        data.winningMerchant
+          ? `${data.merchantsConsidered} merchant${data.merchantsConsidered === 1 ? "" : "s"} bid on this demand — ${data.winningMerchant.name} won.`
+          : "No merchant across the marketplace had a matching offer for this demand."
+      );
     },
     onError: error => setNotice(error.message),
   });
@@ -349,11 +364,23 @@ export default function Home() {
   const decisionKey = selectedAgent === "catalog" ? "retrieval" : selectedAgent === "trust" ? "payment" : selectedAgent === "intent" ? "model" : "";
   const selectedDecision = run?.decisionIntelligence?.find((item: any) => item.layer.toLowerCase().includes(decisionKey));
 
+  const isRunPending = runMutation.isPending || runMarketplaceMutation.isPending;
+
   const doRun = (customQuery?: string) => {
     const textToRun = customQuery ?? query;
     if (textToRun.trim().length < 3) return setNotice("Please describe what you are looking for before starting the agent mesh.");
     setNotice(null);
     setFailureOutcome(null);
+    if (marketplaceMode) {
+      runMarketplaceMutation.mutate({
+        query: textToRun,
+        channel,
+        includeImage: imageAttached,
+        imageStyleTags: imageAnalysis?.styleTags,
+        topN: 6,
+      });
+      return;
+    }
     runMutation.mutate({
       query: textToRun,
       channel,
@@ -547,8 +574,11 @@ export default function Home() {
         <section className="mb-6 flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge className="border-cyan-500/30 bg-cyan-500/10 text-[11px] font-semibold text-cyan-700 dark:text-cyan-200 dark:border-cyan-400/30 dark:bg-cyan-400/10 shadow-sm">
-                <Activity size={13} className="mr-1.5 text-cyan-600 dark:text-cyan-300 animate-pulse" /> NPCI UAP / ACP / AP2 PROTOCOL GATEWAY
+              <Badge
+                className="border-cyan-500/30 bg-cyan-500/10 text-[11px] font-semibold text-cyan-700 dark:text-cyan-200 dark:border-cyan-400/30 dark:bg-cyan-400/10 shadow-sm"
+                title="No live NPCI UAP network exists to connect to yet — this describes the Agent Card discovery and signed-quote capability BazaarOS actually implements, built to align with that emerging protocol shape."
+              >
+                <Activity size={13} className="mr-1.5 text-cyan-600 dark:text-cyan-300" /> AGENT CARD PROTOCOL · UAP/ACP/AP2-ALIGNED
               </Badge>
               <span className="text-[11px] font-mono text-muted-foreground">Razorpay Hiring Track 01 · AI Growth & Agentic Commerce</span>
             </div>
@@ -676,8 +706,27 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* A2A Mode Indicator & Toggle */}
+                {/* Marketplace & A2A Mode Toggles */}
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const next = !marketplaceMode;
+                      setMarketplaceMode(next);
+                      setNotice(
+                        next
+                          ? "Marketplace mode: one shared index across all 12 merchants, ranked once. Each matching merchant's agent can then contest the sale."
+                          : "Single-merchant mode: NovaCart only."
+                      );
+                    }}
+                    className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all ${
+                      marketplaceMode
+                        ? "border-cyan-500/50 bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 ring-1 ring-cyan-400 shadow-xs"
+                        : "border-border bg-muted/50 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Store size={14} className={marketplaceMode ? "text-cyan-600 dark:text-cyan-400" : ""} />
+                    <span>{marketplaceMode ? "Marketplace Mode (12 Merchants)" : "Single Merchant (NovaCart)"}</span>
+                  </button>
                   <button
                     onClick={() => {
                       const nextMode = channel === "a2a" ? "text" : "a2a";
@@ -761,10 +810,10 @@ export default function Home() {
 
                 <Button
                   onClick={() => doRun()}
-                  disabled={runMutation.isPending}
+                  disabled={isRunPending}
                   className="h-14 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 dark:from-cyan-400 dark:via-teal-400 dark:to-emerald-400 font-extrabold text-white dark:text-slate-950 hover:opacity-95 shadow-md hover:shadow-cyan-500/25 transition-all"
                 >
-                  {runMutation.isPending ? (
+                  {isRunPending ? (
                     <RefreshCw className="animate-spin" size={18} />
                   ) : (
                     <>
@@ -889,12 +938,18 @@ export default function Home() {
           <div className="rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
             <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3.5">
               <div>
-                <p className="text-xs font-bold text-foreground uppercase tracking-wide">NovaCart Store Catalog • Verified SKUs</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Ranked using BGE 384D Vector Embeddings + Deterministic Hard Filters</p>
+                <p className="text-xs font-bold text-foreground uppercase tracking-wide">
+                  {run?.bids?.length ? "BazaarOS Marketplace • Cross-Merchant Catalog" : "NovaCart Store Catalog • Verified SKUs"}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {run?.bids?.length
+                    ? "One shared index queried once across every merchant — only merchants with a matching product were asked to bid."
+                    : "Ranked using BGE 384D Vector Embeddings + Deterministic Hard Filters"}
+                </p>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-600 dark:text-cyan-300">
                 <Database size={13} />
-                <span>{overview.data?.productCount ?? products.length} Verified Records</span>
+                <span>{run?.bids?.length ? `${run.bids.length} Merchant Bids` : `${overview.data?.productCount ?? products.length} Verified Records`}</span>
               </div>
             </div>
 
@@ -914,7 +969,7 @@ export default function Home() {
                   placeholder="Not quite right? Refine further — e.g. only leather ones, or under ₹1500"
                   className="h-8 border-none bg-transparent text-xs shadow-none focus-visible:ring-0"
                 />
-                <Button size="sm" onClick={doRefine} disabled={runMutation.isPending || refineText.trim().length < 2} className="h-8 shrink-0 text-xs">
+                <Button size="sm" onClick={doRefine} disabled={isRunPending || refineText.trim().length < 2} className="h-8 shrink-0 text-xs">
                   Refine
                 </Button>
               </div>
@@ -925,7 +980,7 @@ export default function Home() {
           <section className="rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
             <div className="flex items-center gap-2 border-b border-border pb-3">
               <FileSearch size={16} className="text-violet-600 dark:text-violet-400" />
-              <p className="text-xs font-bold text-foreground uppercase tracking-wide">NovaCart SKU Fact & Provenance</p>
+              <p className="text-xs font-bold text-foreground uppercase tracking-wide">{selectedProduct?.merchantName ? `${selectedProduct.merchantName} SKU Fact & Provenance` : "NovaCart SKU Fact & Provenance"}</p>
             </div>
 
             {selectedProduct ? (
@@ -969,6 +1024,73 @@ export default function Home() {
             )}
           </section>
         </section>
+
+        {/* Merchant Agent Bids — live cross-merchant contest, only present in Marketplace mode */}
+        {run?.bids?.length ? (
+          <section className="mt-6 rounded-[26px] border border-border bg-card/90 p-5 shadow-lg backdrop-blur-2xl">
+            <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3.5">
+              <div className="flex items-center gap-2">
+                <Network size={16} className="text-cyan-600 dark:text-cyan-400" />
+                <div>
+                  <p className="text-xs font-bold text-foreground uppercase tracking-wide">Merchant A2A · Live Bidding Contest</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Every surfaced merchant's own agent gets exactly one bounded, capped counter-offer round — never an open auction.
+                  </p>
+                </div>
+              </div>
+              <Badge variant="outline" className="font-mono text-[10px]">
+                max 6% self-discount · single round
+              </Badge>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {run.bids
+                .slice()
+                .sort((a: any, b: any) => b.finalScore - a.finalScore)
+                .map((bid: any) => (
+                  <div
+                    key={`${bid.merchantId}-${bid.productId}`}
+                    className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-3.5 py-3 ${
+                      bid.won
+                        ? "border-emerald-500/50 bg-emerald-500/10 ring-1 ring-emerald-400/40"
+                        : "border-border bg-muted/30"
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-foreground">{bid.merchantName}</span>
+                        {bid.won ? (
+                          <span className="flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2 py-0.5 text-[9px] font-mono font-bold text-emerald-700 dark:text-emerald-300">
+                            <BadgeCheck size={10} /> WON
+                          </span>
+                        ) : null}
+                        {bid.discountAppliedPct > 0 ? (
+                          <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[9px] font-mono font-bold text-amber-700 dark:text-amber-300">
+                            -{(bid.discountAppliedPct * 100).toFixed(1)}% counter-offer
+                          </span>
+                        ) : null}
+                        {bid.isSponsored ? (
+                          <span className="rounded-full border border-violet-500/40 bg-violet-500/15 px-2 py-0.5 text-[9px] font-mono font-bold text-violet-700 dark:text-violet-300" title={`Disclosed paid ranking boost: +${bid.sponsorBoostApplied.toFixed(2)}, applied only after this listing cleared relevance filtering`}>
+                            Sponsored +{bid.sponsorBoostApplied.toFixed(2)}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{bid.productTitle}</p>
+                      <p className="mt-1 text-[10px] text-muted-foreground/80">{bid.reason}</p>
+                      <p className="mt-0.5 text-[9px] font-mono text-muted-foreground/70">organic score {bid.organicScore.toFixed(3)}{bid.isSponsored ? ` + ${bid.sponsorBoostApplied.toFixed(2)} sponsored boost` : ""}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      {bid.discountAppliedPct > 0 ? (
+                        <p className="text-[10px] text-muted-foreground line-through">{currency(bid.initialPriceInrPaise)}</p>
+                      ) : null}
+                      <p className="text-sm font-bold text-foreground font-mono">{currency(bid.finalPriceInrPaise)}</p>
+                      <p className="text-[9px] font-mono text-muted-foreground">score {bid.finalScore.toFixed(3)}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </section>
+        ) : null}
 
         {/* Checkout Mandate & Safe Failure Execution Cockpit */}
         <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.8fr)]">

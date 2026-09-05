@@ -1,0 +1,2 @@
+ALTER TABLE `productOperationalOverlays` ADD `sponsorBudgetInrPaise` integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE `productOperationalOverlays` ADD `sponsorSpentInrPaise` integer DEFAULT 0 NOT NULL;

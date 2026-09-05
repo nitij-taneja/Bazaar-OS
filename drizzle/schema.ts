@@ -89,6 +89,8 @@ export const productOperationalOverlays = sqliteTable("productOperationalOverlay
   isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
   isSponsored: integer("isSponsored", { mode: "boolean" }).notNull().default(false),
   sponsorBoost: real("sponsorBoost").notNull().default(0),
+  sponsorBudgetInrPaise: integer("sponsorBudgetInrPaise").notNull().default(0),
+  sponsorSpentInrPaise: integer("sponsorSpentInrPaise").notNull().default(0),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(nowDefault).$onUpdate(() => new Date()),
 }, table => [uniqueIndex("product_operational_overlay_product_unique").on(table.productId)]);
 

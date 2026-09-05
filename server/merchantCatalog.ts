@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { agentRuns, agentSteps, auditEvents, catalogSources, checkoutMandates, checkoutOrders, commerceIntents, paymentEvents, productEmbeddings, productFacts, productOperationalOverlays, products } from "../drizzle/schema";
 import { clearEmbeddingQueryCache, embedDocuments, embeddingInputSha256, EMBEDDING_MODEL } from "./embeddings";
 import { getDb } from "./db";
-import { invalidateCatalogCache } from "./bazaar";
+import { invalidateCatalogCache, invalidateMarketplaceCatalogCache } from "./bazaar";
 
 export type MerchantCatalogInput = {
   title: string;
@@ -68,6 +68,7 @@ export async function createMerchantCatalogProducts(input: { merchantId: number;
     catch { created.push({ id: product.id, title: row.title, embedding: "pending" }); }
   }
   invalidateCatalogCache(input.merchantId);
+  invalidateMarketplaceCatalogCache();
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.catalog_uploaded", { productCount: created.length, embeddingIndexed: created.filter(product => product.embedding === "indexed").length });
   return { created, source: { id: source.id, name: source.name } };
 }
@@ -91,6 +92,7 @@ export async function updateMerchantCatalogProduct(input: { merchantId: number; 
   try { await indexProduct(input.productId, currentProductRows[0]?.catalogDocument ?? document); }
   catch { embedding = "pending"; }
   invalidateCatalogCache(input.merchantId);
+  invalidateMarketplaceCatalogCache();
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.catalog_product_updated", { productId: input.productId, sourceRecordImmutable: !isMerchantSource, embedding, editedFields: isMerchantSource ? ["title", "brand", "description", "image", "price", "inventory", "delivery", "style", "occasion"] : ["price", "inventory", "delivery", "style", "occasion"] });
   return { updated: true as const, productId: input.productId, sourceRecordImmutable: !isMerchantSource, embedding };
 }
@@ -212,6 +214,56 @@ export async function getMerchantGrowthInsights(merchantId: number) {
   }
 }
 
+// "My Agent" — what this merchant's own agent actually did in the live
+// marketplace, win or lose. Built from the per-merchant bid-outcome audit
+// trail written by runMarketplaceAgent for every bid it makes, not just
+// the wins, so a merchant that keeps losing can see that too.
+export async function getMerchantAgentInsights(merchantId: number) {
+  const db = await getDb();
+  if (!db) return { totalBids: 0, wins: 0, winRatePercent: 0, avgDiscountAppliedPct: 0, sponsoredBidCount: 0, recentBids: [] as Array<Record<string, unknown>>, recentAcknowledgments: [] as Array<Record<string, unknown>> };
+  try {
+    const bidRows = await db
+      .select({ payload: auditEvents.payload, createdAt: auditEvents.createdAt })
+      .from(auditEvents)
+      .where(and(eq(auditEvents.merchantId, merchantId), eq(auditEvents.eventType, "marketplace.bid_outcome")))
+      .orderBy(desc(auditEvents.id))
+      .limit(100);
+
+    const totalBids = bidRows.length;
+    const wins = bidRows.filter(row => (row.payload as { won?: boolean }).won).length;
+    const discounted = bidRows.filter(row => ((row.payload as { discountAppliedPct?: number }).discountAppliedPct ?? 0) > 0);
+    const avgDiscountAppliedPct = discounted.length
+      ? Math.round((discounted.reduce((sum, row) => sum + ((row.payload as { discountAppliedPct?: number }).discountAppliedPct ?? 0), 0) / discounted.length) * 1000) / 1000
+      : 0;
+    const sponsoredBidCount = bidRows.filter(row => (row.payload as { isSponsored?: boolean }).isSponsored).length;
+
+    const recentBids = bidRows.slice(0, 12).map(row => {
+      const payload = row.payload as { won?: boolean; productTitle?: string; merchantsConsidered?: number; initialPriceInrPaise?: number; finalPriceInrPaise?: number; discountAppliedPct?: number; query?: string; isSponsored?: boolean; sponsorBoostApplied?: number };
+      return { ...payload, at: row.createdAt };
+    });
+
+    const ackRows = await db
+      .select({ payload: auditEvents.payload, createdAt: auditEvents.createdAt })
+      .from(auditEvents)
+      .where(and(eq(auditEvents.merchantId, merchantId), eq(auditEvents.eventType, "platform.order_handoff_acknowledged")))
+      .orderBy(desc(auditEvents.id))
+      .limit(8);
+    const recentAcknowledgments = ackRows.map(row => ({ ...(row.payload as Record<string, unknown>), at: row.createdAt }));
+
+    return {
+      totalBids,
+      wins,
+      winRatePercent: totalBids > 0 ? Math.round((wins / totalBids) * 100) : 0,
+      avgDiscountAppliedPct,
+      sponsoredBidCount,
+      recentBids,
+      recentAcknowledgments,
+    };
+  } catch {
+    return { totalBids: 0, wins: 0, winRatePercent: 0, avgDiscountAppliedPct: 0, sponsoredBidCount: 0, recentBids: [] as Array<Record<string, unknown>>, recentAcknowledgments: [] as Array<Record<string, unknown>> };
+  }
+}
+
 export async function applyGrowthPriceSuggestion(input: { merchantId: number; actorUserId: number; productId: number; newPriceInrPaise: number }) {
   const db = await getDb();
   if (!db) throw new Error("BazaarOS database is unavailable.");
@@ -219,24 +271,39 @@ export async function applyGrowthPriceSuggestion(input: { merchantId: number; ac
   if (!owned[0]) throw new Error("This product does not belong to the requesting merchant.");
   await db.update(productOperationalOverlays).set({ testPriceInrPaise: input.newPriceInrPaise, updatedAt: new Date() }).where(eq(productOperationalOverlays.productId, input.productId));
   invalidateCatalogCache(input.merchantId);
+  invalidateMarketplaceCatalogCache();
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.growth_suggestion_applied", { productId: input.productId, newPriceInrPaise: input.newPriceInrPaise });
   return { applied: true as const, productId: input.productId, newPriceInrPaise: input.newPriceInrPaise };
 }
 
 // Sponsorship is a disclosed ranking boost only — never a way to buy an
 // irrelevant product visibility (the ranking code enforces an organic
-// relevance floor before any boost applies). No real billing here; this
-// toggles the boost a merchant is permitted to apply to their own listing.
+// relevance floor before any boost applies). It IS real, bounded billing:
+// each served sponsored impression deducts a fixed cost from this listing's
+// own declared budget (see SPONSORED_IMPRESSION_COST_PAISE in bazaar.ts),
+// and the boost stops applying the instant that budget runs out.
 const SPONSOR_BOOST_CAP = 0.3;
+const DEFAULT_SPONSOR_BUDGET_INR_PAISE = 50_000; // ₹500 default campaign
+const MAX_SPONSOR_BUDGET_INR_PAISE = 5_000_000; // ₹50,000 cap
 
-export async function toggleProductSponsorship(input: { merchantId: number; actorUserId: number; productId: number; isSponsored: boolean; sponsorBoost?: number }) {
+export async function toggleProductSponsorship(input: { merchantId: number; actorUserId: number; productId: number; isSponsored: boolean; sponsorBoost?: number; sponsorBudgetInrPaise?: number }) {
   const db = await getDb();
   if (!db) throw new Error("BazaarOS database is unavailable.");
   const owned = await db.select({ id: products.id }).from(products).where(and(eq(products.id, input.productId), eq(products.merchantId, input.merchantId))).limit(1);
   if (!owned[0]) throw new Error("This product does not belong to the requesting merchant.");
   const sponsorBoost = Math.min(Math.max(input.sponsorBoost ?? 0.2, 0), SPONSOR_BOOST_CAP);
-  await db.update(productOperationalOverlays).set({ isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0, updatedAt: new Date() }).where(eq(productOperationalOverlays.productId, input.productId));
+  const sponsorBudgetInrPaise = Math.min(Math.max(input.sponsorBudgetInrPaise ?? DEFAULT_SPONSOR_BUDGET_INR_PAISE, 0), MAX_SPONSOR_BUDGET_INR_PAISE);
+  await db.update(productOperationalOverlays).set({
+    isSponsored: input.isSponsored,
+    sponsorBoost: input.isSponsored ? sponsorBoost : 0,
+    // A fresh enable starts a fresh campaign (new budget, spend reset to
+    // zero). Disabling leaves the budget/spend as a historical record so
+    // the merchant can still see what the last campaign actually cost.
+    ...(input.isSponsored ? { sponsorBudgetInrPaise, sponsorSpentInrPaise: 0 } : {}),
+    updatedAt: new Date(),
+  }).where(eq(productOperationalOverlays.productId, input.productId));
   invalidateCatalogCache(input.merchantId);
-  await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.sponsorship_toggled", { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0 });
-  return { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0 };
+  invalidateMarketplaceCatalogCache();
+  await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.sponsorship_toggled", { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0, sponsorBudgetInrPaise: input.isSponsored ? sponsorBudgetInrPaise : undefined });
+  return { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0, sponsorBudgetInrPaise: input.isSponsored ? sponsorBudgetInrPaise : undefined };
 }

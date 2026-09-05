@@ -483,13 +483,13 @@ export default function LandingPage() {
       <section id="decision-log" className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 border-t border-border">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <Badge className="border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-xs font-mono mb-3">
-            ARCHITECTURAL DECISION LOG
+            EXAMPLE DECISION RECEIPT
           </Badge>
           <h2 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl">
-            First-Principles Justification Behind Every Layer
+            What a Real Decision Receipt Looks Like
           </h2>
           <p className="mt-3 text-sm text-muted-foreground">
-            Every real run produces a receipt like this — the model, retrieval, and safety route actually used, and why the alternatives were rejected. Example below; run it live in the Studio for your own query.
+            Every real run produces a live version of this — the model, retrieval, and safety route actually used, and why the alternatives were rejected. This is a static example; the Studio's Architectural Decision Log shows the real one for your own query.
           </p>
         </div>
 
