@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { agentRuns, agentSteps, auditEvents, catalogSources, checkoutMandates, checkoutOrders, commerceIntents, paymentEvents, productEmbeddings, productFacts, productOperationalOverlays, products } from "../drizzle/schema";
 import { clearEmbeddingQueryCache, embedDocuments, embeddingInputSha256, EMBEDDING_MODEL } from "./embeddings";
 import { getDb } from "./db";
+import { invalidateCatalogCache } from "./bazaar";
 
 export type MerchantCatalogInput = {
   title: string;
@@ -66,6 +67,7 @@ export async function createMerchantCatalogProducts(input: { merchantId: number;
     try { await indexProduct(product.id, document); created.push({ id: product.id, title: row.title, embedding: "indexed" }); }
     catch { created.push({ id: product.id, title: row.title, embedding: "pending" }); }
   }
+  invalidateCatalogCache(input.merchantId);
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.catalog_uploaded", { productCount: created.length, embeddingIndexed: created.filter(product => product.embedding === "indexed").length });
   return { created, source: { id: source.id, name: source.name } };
 }
@@ -88,6 +90,7 @@ export async function updateMerchantCatalogProduct(input: { merchantId: number; 
   let embedding: "indexed" | "pending" = "indexed";
   try { await indexProduct(input.productId, currentProductRows[0]?.catalogDocument ?? document); }
   catch { embedding = "pending"; }
+  invalidateCatalogCache(input.merchantId);
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.catalog_product_updated", { productId: input.productId, sourceRecordImmutable: !isMerchantSource, embedding, editedFields: isMerchantSource ? ["title", "brand", "description", "image", "price", "inventory", "delivery", "style", "occasion"] : ["price", "inventory", "delivery", "style", "occasion"] });
   return { updated: true as const, productId: input.productId, sourceRecordImmutable: !isMerchantSource, embedding };
 }
@@ -215,6 +218,25 @@ export async function applyGrowthPriceSuggestion(input: { merchantId: number; ac
   const owned = await db.select({ id: products.id }).from(products).where(and(eq(products.id, input.productId), eq(products.merchantId, input.merchantId))).limit(1);
   if (!owned[0]) throw new Error("This product does not belong to the requesting merchant.");
   await db.update(productOperationalOverlays).set({ testPriceInrPaise: input.newPriceInrPaise, updatedAt: new Date() }).where(eq(productOperationalOverlays.productId, input.productId));
+  invalidateCatalogCache(input.merchantId);
   await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.growth_suggestion_applied", { productId: input.productId, newPriceInrPaise: input.newPriceInrPaise });
   return { applied: true as const, productId: input.productId, newPriceInrPaise: input.newPriceInrPaise };
+}
+
+// Sponsorship is a disclosed ranking boost only — never a way to buy an
+// irrelevant product visibility (the ranking code enforces an organic
+// relevance floor before any boost applies). No real billing here; this
+// toggles the boost a merchant is permitted to apply to their own listing.
+const SPONSOR_BOOST_CAP = 0.3;
+
+export async function toggleProductSponsorship(input: { merchantId: number; actorUserId: number; productId: number; isSponsored: boolean; sponsorBoost?: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("BazaarOS database is unavailable.");
+  const owned = await db.select({ id: products.id }).from(products).where(and(eq(products.id, input.productId), eq(products.merchantId, input.merchantId))).limit(1);
+  if (!owned[0]) throw new Error("This product does not belong to the requesting merchant.");
+  const sponsorBoost = Math.min(Math.max(input.sponsorBoost ?? 0.2, 0), SPONSOR_BOOST_CAP);
+  await db.update(productOperationalOverlays).set({ isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0, updatedAt: new Date() }).where(eq(productOperationalOverlays.productId, input.productId));
+  invalidateCatalogCache(input.merchantId);
+  await recordMerchantAudit(input.merchantId, input.actorUserId, "merchant.sponsorship_toggled", { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0 });
+  return { productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.isSponsored ? sponsorBoost : 0 };
 }

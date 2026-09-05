@@ -135,6 +135,15 @@ const MERCHANT_PROFILES = {
   novacart: { label: "NovaCart", reputation: 4.3, deliveryDaysEstimate: 1 },
   "aurelia-premium": { label: "Aurelia Premium", reputation: 4.7, deliveryDaysEstimate: 3.5 },
   "quickbazaar-express": { label: "QuickBazaar Express", reputation: 4.0, deliveryDaysEstimate: 0.5 },
+  "valuemart-bazaar": { label: "ValueMart Bazaar", reputation: 3.6, deliveryDaysEstimate: 6 },
+  "ecostyle-collective": { label: "EcoStyle Collective", reputation: 4.5, deliveryDaysEstimate: 2.5 },
+  "urbantrend-hub": { label: "UrbanTrend Hub", reputation: 4.1, deliveryDaysEstimate: 1 },
+  "heritagecraft-traders": { label: "HeritageCraft Traders", reputation: 4.8, deliveryDaysEstimate: 5 },
+  "metrodeals-wholesale": { label: "MetroDeals Wholesale", reputation: 3.4, deliveryDaysEstimate: 7 },
+  "glowup-essentials": { label: "GlowUp Essentials", reputation: 4.4, deliveryDaysEstimate: 2 },
+  "swiftcart-direct": { label: "SwiftCart Direct", reputation: 4.2, deliveryDaysEstimate: 0.5 },
+  "luxelane-boutique": { label: "LuxeLane Boutique", reputation: 4.9, deliveryDaysEstimate: 6 },
+  "everydaybasics-co": { label: "EverydayBasics Co", reputation: 3.8, deliveryDaysEstimate: 4 },
 };
 
 // Weights are documented and fixed, not learned/hidden — the scoring is
@@ -213,6 +222,16 @@ async function runCrossMerchantComparison(query) {
   const winner = ranked[0];
   console.log(`\n>>> Buyer agent chose: ${winner.label} — "${winner.productTitle}" at ₹${(winner.priceInrPaise / 100).toFixed(2)}, weighted score ${winner.total.toFixed(3)} (price ${SCORE_WEIGHTS.price}, reputation ${SCORE_WEIGHTS.reputation}, delivery ${SCORE_WEIGHTS.delivery}).`);
   record("Cross-Merchant Comparison", "final_decision", { winner: winner.label, ranked });
+
+  // Record the real outcome for the fairness observability dashboard —
+  // this is what lets anyone check whether ranking has, in practice,
+  // favored one merchant over repeated comparisons.
+  const recordOutcome = await trpcMutate("commerce.recordComparisonOutcome", {
+    winnerSlug: winner.merchantSlug,
+    participantSlugs: quotes.map(q => q.merchantSlug),
+    query,
+  });
+  record("Cross-Merchant Comparison", "fairness_outcome_recorded", recordOutcome);
 }
 
 async function main() {

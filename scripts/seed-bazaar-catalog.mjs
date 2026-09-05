@@ -43,9 +43,15 @@ export async function seedMerchant({
   priceMultiplier = 8300, // INR per source USD
   deliveryEtaText = "Next-day in demo service areas",
   productLimit,
+  productOffset = 0,
   client,
 } = {}) {
   const catalog = JSON.parse(await readFile(dataPath, "utf8"));
+  if (productOffset) {
+    const n = catalog.products.length;
+    const shifted = catalog.products.slice(productOffset % n).concat(catalog.products.slice(0, productOffset % n));
+    catalog.products = shifted;
+  }
   if (productLimit) catalog.products = catalog.products.slice(0, productLimit);
 
   const tx = await client.transaction("write");

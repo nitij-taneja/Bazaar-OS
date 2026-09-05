@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { approveMandate, getDemoOverview, getRecentAgentActivity, listKnownMerchantSlugs, runCommerceAgent, simulateTestPaymentFailure, updateMerchantInventory, verifyCheckoutPayment } from "./bazaar";
+import { approveMandate, getDemoOverview, getMerchantFairnessStats, getRecentAgentActivity, listKnownMerchantSlugs, recordComparisonOutcome, runCommerceAgent, simulateTestPaymentFailure, updateMerchantInventory, verifyCheckoutPayment } from "./bazaar";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { loadDemoMerchant } from "./bazaar";
 import { synthesizeOrpheusBrief, transcribeGroqVoice } from "./voice";
 import { analyzeStyleReference } from "./vision";
 import { enforceRateLimit, requestIdentity } from "./rateLimit";
-import { applyGrowthPriceSuggestion, createMerchantCatalogProducts, getMerchantGrowthInsights, getRecentPaymentStatus, reindexMerchantCatalog, updateMerchantCatalogProduct } from "./merchantCatalog";
+import { applyGrowthPriceSuggestion, createMerchantCatalogProducts, getMerchantGrowthInsights, getRecentPaymentStatus, reindexMerchantCatalog, toggleProductSponsorship, updateMerchantCatalogProduct } from "./merchantCatalog";
 
 function limit(ctx: { req: { headers?: Record<string, unknown> } }, route: string, max: number, windowMs: number) {
   enforceRateLimit(`${route}:${requestIdentity(ctx.req.headers)}`, { max, windowMs });
@@ -17,6 +17,10 @@ export const commerceRouter = router({
     .input(z.object({ merchantSlug: z.string().max(80).optional() }).optional())
     .query(({ input }) => getDemoOverview(input?.merchantSlug)),
   knownMerchants: publicProcedure.query(() => listKnownMerchantSlugs()),
+  recordComparisonOutcome: publicProcedure
+    .input(z.object({ winnerSlug: z.string().max(80), participantSlugs: z.array(z.string().max(80)).min(1).max(20), query: z.string().max(800) }))
+    .mutation(({ input, ctx }) => { limit(ctx, "record-comparison", 30, 60_000); return recordComparisonOutcome(input); }),
+  merchantFairnessStats: publicProcedure.query(() => getMerchantFairnessStats()),
   recentActivity: publicProcedure
     .input(z.object({ limit: z.number().int().min(1).max(50).optional() }).optional())
     .query(({ input }) => getRecentAgentActivity(input?.limit ?? 12)),
@@ -57,6 +61,13 @@ export const commerceRouter = router({
       if (ctx.user.role !== "admin" && ctx.user.id !== merchant.ownerId) throw new TRPCError({ code: "FORBIDDEN", message: "Only this merchant’s operator can apply a growth suggestion." });
       return applyGrowthPriceSuggestion({ merchantId: merchant.id, actorUserId: ctx.user.id, productId: input.productId, newPriceInrPaise: input.newPriceInrPaise });
     }),
+  toggleSponsorship: protectedProcedure
+    .input(z.object({ productId: z.number().int().positive(), isSponsored: z.boolean(), sponsorBoost: z.number().min(0).max(0.3).optional() }))
+    .mutation(async ({ input, ctx }) => {
+      const merchant = await loadDemoMerchant();
+      if (ctx.user.role !== "admin" && ctx.user.id !== merchant.ownerId) throw new TRPCError({ code: "FORBIDDEN", message: "Only this merchant’s operator can manage sponsorship." });
+      return toggleProductSponsorship({ merchantId: merchant.id, actorUserId: ctx.user.id, productId: input.productId, isSponsored: input.isSponsored, sponsorBoost: input.sponsorBoost });
+    }),
   createCatalogProducts: protectedProcedure
     .input(z.object({ rows: z.array(z.object({ title: z.string().trim().min(2).max(220), brand: z.string().trim().max(160).optional(), description: z.string().trim().max(2000).optional(), imageUrl: z.string().url().max(2000).optional(), priceInr: z.number().positive().max(500000), inventory: z.number().int().min(0).max(9999), deliveryCities: z.array(z.string().trim().min(2).max(60)).min(1).max(12), deliveryEtaText: z.string().trim().min(3).max(160), styleTags: z.array(z.string().trim().min(2).max(30)).min(1).max(8), occasionTags: z.array(z.string().trim().min(2).max(30)).min(1).max(8) })).min(1).max(50) }))
     .mutation(async ({ input, ctx }) => {
@@ -91,6 +102,7 @@ export const commerceRouter = router({
       imageStyleTags: z.array(z.string().min(1).max(30)).max(6).optional(),
       authorityScope: z.string().max(100).optional(),
       merchantSlug: z.string().max(80).optional(),
+      topN: z.number().int().min(1).max(10).optional(),
     }))
     .mutation(({ input, ctx }) => { limit(ctx, "commerce-run", 12, 60_000); return runCommerceAgent(input); }),
   approveMandate: publicProcedure

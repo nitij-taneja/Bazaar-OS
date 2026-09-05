@@ -1,20 +1,21 @@
 import { motion } from "framer-motion";
-import { BrainCircuit, CheckCircle2, ChevronRight, CircleDollarSign, Clock, Cpu, ExternalLink, Network, Radar, ReceiptText, ScanSearch, ShieldCheck, Sparkles, Terminal, Zap } from "lucide-react";
+import { BadgeCheck, BrainCircuit, CheckCircle2, ChevronRight, CircleDollarSign, Clock, Cpu, ExternalLink, Network, Radar, ReceiptText, ScanSearch, ShieldCheck, Sparkles, Terminal, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export type AgentName = "intent" | "catalog" | "offer" | "a2a" | "trust" | "checkout" | "audit";
+export type AgentName = "intent" | "catalog" | "offer" | "a2a" | "trust" | "merchant_ack" | "checkout" | "audit";
 
 const agents: Record<AgentName, { label: string; short: string; role: string; Icon: typeof BrainCircuit; tone: string; left: string; top: string }> = {
-  intent: { label: "Intent Agent", short: "INT", role: "Extracts typed constraints & preferences", Icon: BrainCircuit, tone: "cyan", left: "10%", top: "49%" },
-  catalog: { label: "Catalog Intelligence", short: "CAT", role: "Hybrid Vector (BGE) + Lexical RAG", Icon: ScanSearch, tone: "violet", left: "31%", top: "22%" },
-  offer: { label: "Offer Agent", short: "OFR", role: "Transparent complementary bundles", Icon: Sparkles, tone: "amber", left: "31%", top: "74%" },
-  a2a: { label: "Merchant A2A", short: "A2A", role: "Protocol card & capability gate", Icon: Network, tone: "blue", left: "54%", top: "18%" },
-  trust: { label: "Trust Gateway", short: "TRU", role: "Deterministic policy & amount gating", Icon: ShieldCheck, tone: "emerald", left: "55%", top: "52%" },
-  checkout: { label: "Checkout Executor", short: "CHK", role: "Razorpay Test-Mode order dispatch", Icon: CircleDollarSign, tone: "rose", left: "78%", top: "32%" },
-  audit: { label: "Audit Ledger", short: "AUD", role: "SHA-256 cryptographic receipt", Icon: ReceiptText, tone: "orange", left: "78%", top: "74%" },
+  intent: { label: "Intent Agent", short: "INT", role: "Extracts typed constraints & preferences", Icon: BrainCircuit, tone: "cyan", left: "8%", top: "49%" },
+  catalog: { label: "Catalog Intelligence", short: "CAT", role: "Hybrid Vector (BGE) + Lexical RAG", Icon: ScanSearch, tone: "violet", left: "26%", top: "20%" },
+  offer: { label: "Offer Agent", short: "OFR", role: "Transparent complementary bundles", Icon: Sparkles, tone: "amber", left: "26%", top: "76%" },
+  a2a: { label: "Merchant A2A", short: "A2A", role: "Protocol card & capability gate", Icon: Network, tone: "blue", left: "46%", top: "14%" },
+  trust: { label: "Trust Gateway", short: "TRU", role: "Deterministic policy & amount gating", Icon: ShieldCheck, tone: "emerald", left: "46%", top: "56%" },
+  merchant_ack: { label: "Merchant Acknowledgment", short: "ACK", role: "This merchant accepts fulfillment responsibility", Icon: BadgeCheck, tone: "teal", left: "65%", top: "82%" },
+  checkout: { label: "Checkout Executor", short: "CHK", role: "Razorpay Test-Mode order dispatch", Icon: CircleDollarSign, tone: "rose", left: "84%", top: "32%" },
+  audit: { label: "Audit Ledger", short: "AUD", role: "SHA-256 cryptographic receipt", Icon: ReceiptText, tone: "orange", left: "84%", top: "76%" },
 };
 
-const order: AgentName[] = ["intent", "catalog", "offer", "a2a", "trust", "checkout", "audit"];
+const order: AgentName[] = ["intent", "catalog", "offer", "a2a", "trust", "merchant_ack", "checkout", "audit"];
 const edges: Array<[AgentName, AgentName]> = [
   ["intent", "catalog"],
   ["intent", "offer"],
@@ -22,7 +23,8 @@ const edges: Array<[AgentName, AgentName]> = [
   ["catalog", "trust"],
   ["offer", "trust"],
   ["a2a", "trust"],
-  ["trust", "checkout"],
+  ["trust", "merchant_ack"],
+  ["merchant_ack", "checkout"],
   ["trust", "audit"],
   ["checkout", "audit"],
 ];
@@ -35,6 +37,7 @@ const tones: Record<string, { border: string; text: string; bg: string; glow: st
   emerald: { border: "border-emerald-500/40 hover:border-emerald-400 dark:border-emerald-400/40 dark:hover:border-emerald-300", text: "text-emerald-700 dark:text-emerald-300", bg: "bg-emerald-500/10 dark:bg-emerald-950/40", glow: "shadow-[0_0_25px_rgba(52,211,153,0.25)]", badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20" },
   rose: { border: "border-rose-500/40 hover:border-rose-400 dark:border-rose-400/40 dark:hover:border-rose-300", text: "text-rose-700 dark:text-rose-300", bg: "bg-rose-500/10 dark:bg-rose-950/40", glow: "shadow-[0_0_25px_rgba(251,113,133,0.25)]", badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20" },
   orange: { border: "border-orange-500/40 hover:border-orange-400 dark:border-orange-400/40 dark:hover:border-orange-300", text: "text-orange-700 dark:text-orange-300", bg: "bg-orange-500/10 dark:bg-orange-950/40", glow: "shadow-[0_0_25px_rgba(251,146,60,0.25)]", badge: "bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/20" },
+  teal: { border: "border-teal-500/40 hover:border-teal-400 dark:border-teal-400/40 dark:hover:border-teal-300", text: "text-teal-700 dark:text-teal-300", bg: "bg-teal-500/10 dark:bg-teal-950/40", glow: "shadow-[0_0_25px_rgba(45,212,191,0.25)]", badge: "bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20" },
 };
 
 export function PipelineVisualizer({ traces, activeAgent, selectedAgent, onSelect }: { traces: any[]; activeAgent: AgentName | null; selectedAgent: AgentName; onSelect: (agent: AgentName) => void }) {
@@ -58,7 +61,7 @@ export function PipelineVisualizer({ traces, activeAgent, selectedAgent, onSelec
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold tracking-[0.2em] text-cyan-600 dark:text-cyan-400">AUTONOMOUS AGENT MESH</span>
-              <span className="rounded bg-cyan-500/10 dark:bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-mono text-cyan-700 dark:text-cyan-300">7 ACTIVE NODES</span>
+              <span className="rounded bg-cyan-500/10 dark:bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-mono text-cyan-700 dark:text-cyan-300">8 ACTIVE NODES</span>
             </div>
             <h2 className="text-lg font-bold tracking-tight text-foreground">Live Decision & Capability Topology</h2>
           </div>

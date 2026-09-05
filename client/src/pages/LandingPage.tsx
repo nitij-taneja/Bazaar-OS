@@ -41,6 +41,7 @@ import { trpc } from "@/lib/trpc";
 export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
   const overview = trpc.commerce.overview.useQuery();
+  const fairnessStats = trpc.commerce.merchantFairnessStats.useQuery();
   const [copiedKey, setCopiedKey] = useState(false);
   const [agentToken, setAgentToken] = useState<{
     clientId: string;
@@ -112,7 +113,7 @@ export default function LandingPage() {
 
           <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Capabilities</a>
-            <a href="#architecture" className="hover:text-foreground transition-colors">7 Autonomous Nodes</a>
+            <a href="#architecture" className="hover:text-foreground transition-colors">8 Autonomous Nodes</a>
             <a href="#decision-log" className="hover:text-foreground transition-colors">Decision Log</a>
             <a href="#trust" className="hover:text-foreground transition-colors">Trust & Safety</a>
             <a href="#agent-auth" className="hover:text-foreground transition-colors">AI Buyer Auth & API</a>
@@ -441,14 +442,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 7-Node Multi-Agent Topology Section */}
+      {/* 8-Node Multi-Agent Topology Section */}
       <section id="architecture" className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 border-t border-border">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <Badge className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-mono mb-3">
             AUTONOMOUS PROTOCOL MESH
           </Badge>
           <h2 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl">
-            How BazaarOS Orchestrates 7 Specialized Autonomous Nodes
+            How BazaarOS Orchestrates 8 Specialized Autonomous Nodes
           </h2>
           <p className="mt-3 text-sm text-muted-foreground">
             No single black-box LLM controls the checkout. Each node possesses tightly bounded authority with verified typed data handoffs.
@@ -462,8 +463,9 @@ export default function LandingPage() {
             { id: "03", name: "Offer Agent", role: "Proposes transparent complementary bundles to increase merchant AOV.", tone: "amber" },
             { id: "04", name: "Merchant A2A Gate", role: "Exposes capability cards to external AI buyers (NPCI UAP/ACP).", tone: "blue" },
             { id: "05", name: "Trust Gateway", role: "100% deterministic code gate: checks inventory, city, and ₹5,000 bounds.", tone: "emerald" },
-            { id: "06", name: "Checkout Executor", role: "Generates 10-minute HMAC lock & triggers Razorpay Test Mode.", tone: "rose" },
-            { id: "07", name: "Audit Ledger", role: "Records cryptographic SHA-256 receipts with source provenance.", tone: "orange" },
+            { id: "06", name: "Merchant Acknowledgment", role: "The specific chosen merchant formally accepts fulfillment before a mandate is drafted.", tone: "teal" },
+            { id: "07", name: "Checkout Executor", role: "Generates 10-minute HMAC lock & triggers Razorpay Test Mode.", tone: "rose" },
+            { id: "08", name: "Audit Ledger", role: "Records cryptographic SHA-256 receipts with source provenance.", tone: "orange" },
           ].map(node => (
             <div key={node.id} className="rounded-2xl border border-border bg-card/70 p-4.5 backdrop-blur-xl shadow-xs">
               <div className="flex items-center justify-between mb-3">
@@ -540,6 +542,41 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Fairness Observability Section */}
+      <section id="fairness" className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 border-t border-border">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <Badge className="border-violet-500/30 bg-violet-500/10 text-violet-700 dark:text-violet-300 text-xs font-mono mb-3">
+            FAIRNESS OBSERVABILITY
+          </Badge>
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl">
+            Is Ranking Fair Across Merchants? Here's the Real Data.
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Win-rate per merchant across recorded cross-merchant comparisons. This is observability only — nothing here automatically corrects ranking; it just lets anyone check whether the platform has, in practice, favored one merchant.
+          </p>
+        </div>
+
+        {fairnessStats.data?.length ? (
+          <div className="mx-auto max-w-3xl space-y-2.5">
+            {fairnessStats.data.map(stat => (
+              <div key={stat.slug} className="flex items-center gap-3 rounded-xl border border-border bg-card/70 p-3">
+                <span className="w-40 shrink-0 truncate text-xs font-semibold text-foreground">{stat.merchantName}</span>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-violet-500" style={{ width: `${stat.winRatePercent}%` }} />
+                </div>
+                <span className="w-32 shrink-0 text-right font-mono text-xs text-muted-foreground">
+                  {stat.winCount}/{stat.eligibleCount} wins ({stat.winRatePercent}%)
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mx-auto max-w-md text-center text-sm text-muted-foreground">
+            No cross-merchant comparisons recorded yet. Run <code className="text-cyan-600 dark:text-cyan-300">scripts/external-buyer-agents.mjs</code> to generate real comparison data.
+          </p>
+        )}
       </section>
 
       {/* Trust & Safe Failure Section */}

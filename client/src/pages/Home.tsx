@@ -20,6 +20,7 @@ import {
   Database,
   Eye,
   FileSearch,
+  Filter,
   Gift,
   Home as HomeIcon,
   ImagePlus,
@@ -127,6 +128,11 @@ function ProductCard({ product, selected, onSelect }: { product: any; selected: 
             Match {(product.score * 100).toFixed(0)}%
           </span>
         ) : null}
+        {product.sponsorBoostApplied > 0 ? (
+          <span className="absolute bottom-2.5 left-2.5 rounded-full border border-amber-500/40 bg-amber-500/20 px-2 py-0.5 text-[9px] font-mono font-bold text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 backdrop-blur-md">
+            Sponsored
+          </span>
+        ) : null}
       </div>
 
       <div className="p-3.5">
@@ -151,6 +157,7 @@ function ProductCard({ product, selected, onSelect }: { product: any; selected: 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [query, setQuery] = useState(presetScenarios[0].query);
+  const [refineText, setRefineText] = useState("");
   const [workspace, setWorkspace] = useState<"shop" | "mesh" | "audit" | "models" | "merchant">("shop");
   const [failureOutcome, setFailureOutcome] = useState<string | null>(null);
   const [channel, setChannel] = useState<"text" | "voice" | "image" | "a2a">("text");
@@ -353,7 +360,16 @@ export default function Home() {
       includeImage: imageAttached,
       imageStyleTags: imageAnalysis?.styleTags,
       authorityScope: channel === "a2a" ? "SEARCH_AND_QUOTE_ONLY" : "HUMAN_PRESENT_CONFIRMATION_REQUIRED",
+      topN: 5,
     });
+  };
+
+  const doRefine = () => {
+    if (refineText.trim().length < 2) return;
+    const combinedQuery = `${query.trim()}. Additional constraint: ${refineText.trim()}`;
+    setQuery(combinedQuery);
+    setRefineText("");
+    doRun(combinedQuery);
   };
 
   const selectPreset = (preset: (typeof presetScenarios)[number]) => {
@@ -557,7 +573,7 @@ export default function Home() {
               <p className="text-[9px] font-mono font-bold tracking-[0.18em] text-muted-foreground mt-0.5">STORE SKUS</p>
             </div>
             <div className="bg-card px-5 py-4 backdrop-blur-xl">
-              <p className="text-2xl font-mono font-extrabold text-cyan-600 dark:text-cyan-300 tracking-tight">7</p>
+              <p className="text-2xl font-mono font-extrabold text-cyan-600 dark:text-cyan-300 tracking-tight">8</p>
               <p className="text-[9px] font-mono font-bold tracking-[0.18em] text-muted-foreground mt-0.5">AUTONOMOUS NODES</p>
             </div>
             <div className="bg-card px-5 py-4 backdrop-blur-xl">
@@ -878,15 +894,31 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-600 dark:text-cyan-300">
                 <Database size={13} />
-                <span>26 Verified Records</span>
+                <span>{overview.data?.productCount ?? products.length} Verified Records</span>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-              {products.slice(0, 3).map((product: any) => (
+              {products.slice(0, 10).map((product: any) => (
                 <ProductCard key={product.id} product={product} selected={selectedProductId === product.id} onSelect={() => setSelectedProductId(product.id)} />
               ))}
             </div>
+
+            {run?.candidates?.length ? (
+              <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-2.5">
+                <Filter size={14} className="shrink-0 text-muted-foreground" />
+                <Input
+                  value={refineText}
+                  onChange={event => setRefineText(event.target.value)}
+                  onKeyDown={event => event.key === "Enter" && doRefine()}
+                  placeholder="Not quite right? Refine further — e.g. only leather ones, or under ₹1500"
+                  className="h-8 border-none bg-transparent text-xs shadow-none focus-visible:ring-0"
+                />
+                <Button size="sm" onClick={doRefine} disabled={runMutation.isPending || refineText.trim().length < 2} className="h-8 shrink-0 text-xs">
+                  Refine
+                </Button>
+              </div>
+            ) : null}
           </div>
 
           {/* Product Provenance Card */}

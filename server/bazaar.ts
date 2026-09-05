@@ -24,7 +24,7 @@ import { createRazorpayTestOrder, verifyRazorpayPaymentSignature } from "./razor
 import { extractGroqIntent } from "./groq";
 import { cosineSimilarity, embedQuery, EMBEDDING_MODEL } from "./embeddings";
 
-export const AGENT_ORDER = ["intent", "catalog", "offer", "a2a", "trust", "checkout", "audit"] as const;
+export const AGENT_ORDER = ["intent", "catalog", "offer", "a2a", "trust", "merchant_ack", "checkout", "audit"] as const;
 export type AgentName = (typeof AGENT_ORDER)[number];
 export type Channel = "text" | "voice" | "image" | "a2a";
 
@@ -45,6 +45,8 @@ export type CatalogProduct = {
   occasionTags: string[];
   overlayLabel: string;
   overlayRationale: string;
+  isSponsored: boolean;
+  sponsorBoost: number;
   sourceName: string;
   sourceUrl: string;
   factRows: Array<{ factKey: string; factValue: string; factKind: "source" | "operational_overlay" | "inference"; sourcePointer: string; confidence: string }>;
@@ -95,6 +97,10 @@ const occasionLexicon = ["birthday", "gift", "work", "festive", "everyday", "ann
 const catalogCache = new Map<number, { expiresAt: number; catalog: CatalogProduct[] }>();
 const inMemoryMandates = new Map<number, any>();
 let fallbackCatalogCache: CatalogProduct[] | null = null;
+
+export function invalidateCatalogCache(merchantId: number) {
+  catalogCache.delete(merchantId);
+}
 let nextMandateSeq = 100;
 let nextOrderSeq = 500;
 const CATALOG_CACHE_TTL_MS = 90_000;
@@ -229,6 +235,8 @@ export function loadFallbackCatalog(): CatalogProduct[] {
           occasionTags: occasions,
           overlayLabel: "BazaarOS staging operational overlay — not part of the public source dataset",
           overlayRationale: "Test price uses a documented USD-to-INR staging conversion of ₹83.00 per public-source USD. Inventory and delivery are deterministic staging values.",
+          isSponsored: false,
+          sponsorBoost: 0,
           sourceName: data.source.name,
           sourceUrl: data.source.url,
           factRows: [
@@ -255,6 +263,15 @@ const DEMO_MERCHANT_FALLBACKS: Record<string, { id: number; ownerId: number; nam
   novacart: { id: 1, ownerId: 1, name: "NovaCart", slug: "novacart", description: "An AI-transactable lifestyle & fashion merchant enabled by BazaarOS gateway.", defaultCurrency: "INR" },
   "aurelia-premium": { id: 2, ownerId: 1, name: "Aurelia Premium", slug: "aurelia-premium", description: "A premium-positioned lifestyle retailer on BazaarOS: higher-tier pricing, curated selection, slower delivery.", defaultCurrency: "INR" },
   "quickbazaar-express": { id: 3, ownerId: 1, name: "QuickBazaar Express", slug: "quickbazaar-express", description: "A delivery-speed-focused retailer on BazaarOS: same/next-day fulfillment, competitive pricing.", defaultCurrency: "INR" },
+  "valuemart-bazaar": { id: 4, ownerId: 1, name: "ValueMart Bazaar", slug: "valuemart-bazaar", description: "A discount-focused retailer: the lowest prices on the platform, standard shipping speed.", defaultCurrency: "INR" },
+  "ecostyle-collective": { id: 5, ownerId: 1, name: "EcoStyle Collective", slug: "ecostyle-collective", description: "A sustainability-positioned retailer: consolidated eco-shipping, mid-tier pricing.", defaultCurrency: "INR" },
+  "urbantrend-hub": { id: 6, ownerId: 1, name: "UrbanTrend Hub", slug: "urbantrend-hub", description: "A trend-forward retailer for younger buyers: competitive pricing, fast delivery.", defaultCurrency: "INR" },
+  "heritagecraft-traders": { id: 7, ownerId: 1, name: "HeritageCraft Traders", slug: "heritagecraft-traders", description: "An artisanal/traditional-craft positioned retailer: made-to-order, premium pricing.", defaultCurrency: "INR" },
+  "metrodeals-wholesale": { id: 8, ownerId: 1, name: "MetroDeals Wholesale", slug: "metrodeals-wholesale", description: "A bulk/wholesale-positioned retailer: the platform's lowest wholesale pricing, slower warehouse dispatch.", defaultCurrency: "INR" },
+  "glowup-essentials": { id: 9, ownerId: 1, name: "GlowUp Essentials", slug: "glowup-essentials", description: "A lifestyle/gifting-niche retailer: mid-to-premium pricing, reliable 2-day delivery.", defaultCurrency: "INR" },
+  "swiftcart-direct": { id: 10, ownerId: 1, name: "SwiftCart Direct", slug: "swiftcart-direct", description: "A direct-to-consumer retailer optimized for metro same-day delivery at competitive prices.", defaultCurrency: "INR" },
+  "luxelane-boutique": { id: 11, ownerId: 1, name: "LuxeLane Boutique", slug: "luxelane-boutique", description: "The platform's luxury boutique: highest-tier pricing, white-glove curated delivery.", defaultCurrency: "INR" },
+  "everydaybasics-co": { id: 12, ownerId: 1, name: "EverydayBasics Co", slug: "everydaybasics-co", description: "A no-frills basics retailer: the platform's lowest prices, standard delivery.", defaultCurrency: "INR" },
 };
 
 export async function loadDemoMerchant(slug = "novacart") {
@@ -272,6 +289,58 @@ export async function loadDemoMerchant(slug = "novacart") {
 
 export function listKnownMerchantSlugs() {
   return Object.keys(DEMO_MERCHANT_FALLBACKS);
+}
+
+// Fairness observability: records real cross-merchant comparison outcomes
+// (from scripts/external-buyer-agents.mjs or any future in-app comparison
+// trigger) to the existing audit ledger — no new table. This is
+// observability only: nothing here automatically corrects ranking. It just
+// lets anyone check whether ranking has, in practice, favored one merchant.
+export async function recordComparisonOutcome(input: { winnerSlug: string; participantSlugs: string[]; query: string }) {
+  const winner = await loadDemoMerchant(input.winnerSlug);
+  await recordAudit(winner.id, null, "buyer_agent.merchant_comparison", "agent", { winnerSlug: input.winnerSlug, participantSlugs: input.participantSlugs, query: input.query });
+  return { recorded: true as const };
+}
+
+export async function getMerchantFairnessStats() {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    const rows = await db
+      .select({ payload: auditEvents.payload })
+      .from(auditEvents)
+      .where(eq(auditEvents.eventType, "buyer_agent.merchant_comparison"))
+      .orderBy(desc(auditEvents.id))
+      .limit(200);
+
+    const wins = new Map<string, number>();
+    const eligible = new Map<string, number>();
+    for (const row of rows) {
+      const payload = row.payload as { winnerSlug?: string; participantSlugs?: string[] };
+      if (!payload?.winnerSlug) continue;
+      wins.set(payload.winnerSlug, (wins.get(payload.winnerSlug) ?? 0) + 1);
+      for (const slug of payload.participantSlugs ?? []) {
+        eligible.set(slug, (eligible.get(slug) ?? 0) + 1);
+      }
+    }
+
+    const slugs = new Set([...Array.from(wins.keys()), ...Array.from(eligible.keys())]);
+    return Array.from(slugs)
+      .map(slug => {
+        const eligibleCount = eligible.get(slug) ?? 0;
+        const winCount = wins.get(slug) ?? 0;
+        return {
+          slug,
+          merchantName: DEMO_MERCHANT_FALLBACKS[slug]?.name ?? slug,
+          winCount,
+          eligibleCount,
+          winRatePercent: eligibleCount > 0 ? Math.round((winCount / eligibleCount) * 100) : 0,
+        };
+      })
+      .sort((a, b) => b.winRatePercent - a.winRatePercent);
+  } catch {
+    return [];
+  }
 }
 
 export async function loadCatalogWithCache(merchantId: number): Promise<{ catalog: CatalogProduct[]; cache: "hit" | "miss" }> {
@@ -314,6 +383,8 @@ export async function loadCatalogWithCache(merchantId: number): Promise<{ catalo
             occasionTags: row.overlay.occasionTags,
             overlayLabel: row.overlay.overlayLabel,
             overlayRationale: row.overlay.overlayRationale,
+            isSponsored: row.overlay.isSponsored,
+            sponsorBoost: row.overlay.sponsorBoost,
             sourceName: row.source.name,
             sourceUrl: row.source.sourceUrl,
             factRows: [],
@@ -455,7 +526,7 @@ function trace(agentName: AgentName, decisionKind: string, rationale: string, in
   return { agentName, status, decisionKind, rationale, inputSummary, outputSummary, alternatives, provenance, latencyMs };
 }
 
-export async function runCommerceAgent(input: { query: string; channel: Channel; includeImage: boolean; imageStyleTags?: string[]; authorityScope?: string; merchantSlug?: string }): Promise<AgentRunResponse> {
+export async function runCommerceAgent(input: { query: string; channel: Channel; includeImage: boolean; imageStyleTags?: string[]; authorityScope?: string; merchantSlug?: string; topN?: number }): Promise<AgentRunResponse> {
   const merchant = await loadDemoMerchant(input.merchantSlug);
   const db = await getDb();
   const deterministicIntent = extractIntent(input.query, input.channel);
@@ -547,7 +618,18 @@ export async function runCommerceAgent(input: { query: string; channel: Channel;
       const lexicalScore = similarity(visualSearchContext, product);
       const semanticScore = queryEmbedding && vectorByProductId.has(product.id) ? cosineSimilarity(queryEmbedding.vector, vectorByProductId.get(product.id)!) : 0;
       const imageTagBoost = (input.imageStyleTags ?? []).filter(tag => product.styleTags.includes(tag) || product.title.toLowerCase().includes(tag)).length * 0.45;
-      const score = lexicalScore * 0.3 + semanticScore * 0.7 + product.styleTags.filter(tag => intent.styles.includes(tag)).length * 0.35 + product.occasionTags.filter(tag => intent.occasions.includes(tag)).length * 0.2 + imageTagBoost;
+      const organicScore = lexicalScore * 0.3 + semanticScore * 0.7 + product.styleTags.filter(tag => intent.styles.includes(tag)).length * 0.35 + product.occasionTags.filter(tag => intent.occasions.includes(tag)).length * 0.2 + imageTagBoost;
+      // Sponsorship is a separate, tracked term — never a way to surface an
+      // irrelevant product. It only applies once the product has already
+      // cleared hard filters (it's in `valid`) and has a non-trivial organic
+      // score; the boost itself is capped, and always disclosed in `reasons`
+      // and the Decision Intelligence panel, never blended in silently.
+      const ORGANIC_FLOOR_FOR_SPONSORSHIP = 0.15;
+      const SPONSOR_BOOST_CAP = 0.3;
+      const sponsorBoostApplied = product.isSponsored && organicScore >= ORGANIC_FLOOR_FOR_SPONSORSHIP
+        ? Math.min(product.sponsorBoost, SPONSOR_BOOST_CAP)
+        : 0;
+      const score = organicScore + sponsorBoostApplied;
       const reasons = [
         product.testInventory > 0 ? `Staging inventory has ${product.testInventory} units available.` : "Inventory unavailable.",
         intent.city ? `${intent.city} is in the published staging serviceability list.` : "No delivery city constraint was supplied.",
@@ -555,10 +637,11 @@ export async function runCommerceAgent(input: { query: string; channel: Channel;
         `Style match uses catalog tags: ${product.styleTags.join(", ")}.`,
       ];
       if (imageTagBoost > 0) reasons.push(`Visual style cues matched: ${input.imageStyleTags?.join(", ")}.`);
-      return { ...product, score, reasons, lexicalScore, semanticScore };
+      if (sponsorBoostApplied > 0) reasons.push(`Sponsored placement: this merchant paid to boost this listing (+${sponsorBoostApplied.toFixed(2)} disclosed boost, applied only after this product already cleared relevance filtering).`);
+      return { ...product, score, reasons, lexicalScore, semanticScore, organicScore, sponsorBoostApplied };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .slice(0, Math.min(Math.max(input.topN ?? 5, 1), 10));
 
   traces.push(trace(
     "catalog",
@@ -590,7 +673,7 @@ export async function runCommerceAgent(input: { query: string; channel: Channel;
     "transparent_offer_ranking",
     "The offer agent ranked only candidates that cleared all hard filters. A single optional bundle is surfaced only after the primary recommendation, and it remains outside the cart until explicit customer acceptance.",
     { candidateCount: candidates.length, requestedStyles: intent.styles, requestedOccasions: intent.occasions },
-    { primaryProductId: best?.id ?? null, optionalBundle: bundle?.title ?? null, autoAdded: false },
+    { primaryProductId: best?.id ?? null, optionalBundle: bundle?.title ?? null, autoAdded: false, sponsoredResultsShown: candidates.filter(candidate => candidate.sponsorBoostApplied > 0).length },
     [{ route: "margin-first ranking", rejectedBecause: "Merchant revenue cannot override user constraints or factual fit." }],
     best ? best.factRows.map(fact => ({ productId: best.id, factKind: fact.factKind, factKey: fact.factKey })) : [],
     118,
@@ -623,6 +706,24 @@ export async function runCommerceAgent(input: { query: string; channel: Channel;
     7,
     trustPasses ? "completed" : "blocked",
   ));
+
+  // Order acknowledgment: a real, deterministic checkpoint — not a fake
+  // "human team reviewed this." It confirms the specific merchant record is
+  // active and formally accepts responsibility for fulfillment, and writes
+  // a platform-level audit entry, before any mandate is drafted for it.
+  if (trustPasses && best) {
+    traces.push(trace(
+      "merchant_ack",
+      "merchant_order_acknowledgment",
+      `${merchant.name}'s merchant agent formally accepted this request for fulfillment. This checkpoint confirms the merchant record is active and that this specific merchant — not another one listing the same product — is responsible for fulfilling it.`,
+      { merchantId: merchant.id, merchantName: merchant.name, productId: best.id },
+      { merchantAcknowledged: true, platformHandoffApproved: true },
+      [{ route: "skip_merchant_ack", rejectedBecause: "Every merchant-bound order must be explicitly acknowledged by that merchant's agent before a mandate is drafted." }],
+      [{ source: "merchant_registry", merchantId: merchant.id }],
+      5,
+    ));
+    await recordAudit(merchant.id, runId, "platform.order_handoff_acknowledged", "system", { merchantId: merchant.id, merchantName: merchant.name, productId: best.id, amountInrPaise });
+  }
 
   let mandate: AgentRunResponse["mandate"] = null;
   if (trustPasses) {

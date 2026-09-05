@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 const nowDefault = sql`(unixepoch())`;
 
@@ -87,6 +87,8 @@ export const productOperationalOverlays = sqliteTable("productOperationalOverlay
   overlayLabel: text("overlayLabel", { length: 200 }).notNull(),
   overlayRationale: text("overlayRationale").notNull(),
   isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
+  isSponsored: integer("isSponsored", { mode: "boolean" }).notNull().default(false),
+  sponsorBoost: real("sponsorBoost").notNull().default(0),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(nowDefault).$onUpdate(() => new Date()),
 }, table => [uniqueIndex("product_operational_overlay_product_unique").on(table.productId)]);
 
@@ -147,7 +149,7 @@ export const agentRuns = sqliteTable("agentRuns", {
 export const agentSteps = sqliteTable("agentSteps", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   runId: integer("runId").notNull(),
-  agentName: text("agentName", { enum: ["intent", "catalog", "offer", "a2a", "trust", "checkout", "audit"] }).notNull(),
+  agentName: text("agentName", { enum: ["intent", "catalog", "offer", "a2a", "trust", "merchant_ack", "checkout", "audit"] }).notNull(),
   status: text("status", { enum: ["idle", "active", "completed", "blocked", "error"] }).notNull(),
   decisionKind: text("decisionKind", { length: 100 }).notNull(),
   rationale: text("rationale").notNull(),
