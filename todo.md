@@ -50,3 +50,35 @@
 - [x] Add product-edit coverage for public-source and merchant-uploaded catalog records, audit logging, and embedding outcomes
 - [x] Deliver a candid chat-based product review covering product scope, dataset provenance, architecture tradeoffs, risks, and hackathon decisions
 - [ ] Create and deliver a clean downloadable BazaarOS project ZIP archive
+
+## Session: Vercel migration + multi-merchant marketplace (2026-09-05)
+
+**Done, verified, and pushed to `main` on GitHub:**
+
+- [x] Migrated the database from MySQL to SQLite/Turso (libSQL) so the app runs outside the original Manus platform — schema, all upsert/returning call sites, seed scripts. Local dev needs zero setup (falls back to a local file); production points `DATABASE_URL`/`DATABASE_AUTH_TOKEN` at Turso.
+- [x] Converted the Express app into a Vercel-deployable shape (`api/index.ts`, `vercel.json`) while keeping local `pnpm dev` unchanged.
+- [x] Fixed a real bug: image vision analysis was silently always using a fake hash-bucket fallback because Groq had removed the hardcoded vision model. Replaced with a direct Google Gemini Vision call (real, tested against an actual photo).
+- [x] Found and closed a real trust-boundary gap via live adversarial testing (`scripts/external-buyer-agents.mjs`): an external agent could omit its authority scope and get a mandate + auto-approve it with zero human involvement. Authority is now derived from the server-known channel, never trusted from client input. Re-verified live after the fix.
+- [x] Scaled from 3 to **12 real merchants**, and from 26 to **300 real products** (byte-range-fetched from the public Amazon Reviews'23 dataset, same curation rules as the original 26 — no fake data). `pnpm db:seed:demo` seeds all of it.
+- [x] Native cross-merchant marketplace agent (`runMarketplaceAgent`): one shared catalog query, each matching merchant gets one bounded/capped counter-offer round (max 6%, never an open auction), Trust Gateway runs once against the winning bid's final price.
+- [x] Real, bounded sponsorship/ad system: a merchant-declared budget, a fixed per-impression cost, never overdrawn — and (after a review pass) fully disclosed in the a2a trace, the bidding UI ("Sponsored +X" tag), and the merchant console's "My Agent" panel.
+- [x] Real, rule-based (not ML) merchant growth insights and fairness-observability dashboard, both computed from actual persisted agent-run history.
+- [x] Order-acknowledgment pipeline stage (8 nodes now, was 7) with its own audit trail entry.
+- [x] Live Agent Activity feed — any caller's real runs (browser, script, or a genuine external agent), not just your own.
+- [x] UI pass based on live feedback: "why this" reasons now shown per product card, a consultative check-in with quick-reply options (cheaper/premium/something different) instead of jumping straight to checkout, and a technical "Inspect Agent Reasoning" toggle (off by default) so the full mesh/trust/decision-log detail is one click away instead of being the default view.
+- [x] Fixed a real cache-invalidation bug: growth-suggestion/sponsorship/catalog edits wrote to the DB correctly but the 90-second in-memory catalog cache wasn't cleared, so changes silently didn't show for up to 90s.
+
+**Explicitly not built (by design, discussed and agreed):**
+- Real per-merchant login/multi-tenant accounts (one demo operator today).
+- Actual ad billing — sponsorship spend is real bounded accounting, not a payment.
+- An algorithm that auto-corrects ranking bias — the fairness dashboard is observability only.
+- The ads/sponsorship *marketplace* (a separate buyer for ad slots), a full multi-round negotiation protocol, and literal 1000+-merchant scale — all flagged as pitch-deck vision, not built.
+- A standing/pre-authorized "shopping mandate" that would let an external agent complete a purchase without a human present — explicitly declined; would reopen the trust-boundary question above.
+
+**Remaining before you can demo/submit:**
+- [ ] Actually deploy to Vercel (import the GitHub repo, add env vars from `.env.example`) — I've prepared everything but can't do the Vercel dashboard steps myself.
+- [ ] Get a Turso database and run `pnpm db:push` + `pnpm db:seed:demo` against it (production still needs this — local dev has been using a local SQLite file).
+- [ ] Point Razorpay's Test Mode webhook at the published `https://<your-domain>/api/webhooks/razorpay` (the original portfolio-URL item above is the same task).
+- [ ] Get your own Razorpay Test Mode keys into the deployed env and do one real end-to-end payment test (Groq and Gemini keys are already confirmed live-tested this session; Razorpay has not been).
+- [ ] Optional, if there's time: extend the "Inspect Agent Reasoning" toggle pattern to the Merchant Console / Landing Page if those still feel too dense by comparison to the now-simplified Studio page.
+- [ ] Rehearse the demo script in `docs/BAZAAROS_OPERATING_GUIDE.md` end to end — it hasn't been re-walked since this session's changes.
