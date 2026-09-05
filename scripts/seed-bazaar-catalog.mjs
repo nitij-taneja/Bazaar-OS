@@ -38,12 +38,12 @@ const inferOccasions = title => {
 
 const tx = await client.transaction("write");
 try {
-  const merchantRows = await tx.execute({ sql: "SELECT id FROM merchants WHERE slug = ? LIMIT 1", args: ["nivara-studio"] });
+  const merchantRows = await tx.execute({ sql: "SELECT id FROM merchants WHERE slug = ? LIMIT 1", args: ["novacart"] });
   let merchantId = merchantRows.rows[0]?.id;
   if (!merchantId) {
     const insert = await tx.execute({
       sql: "INSERT INTO merchants (ownerId, name, slug, description, defaultCurrency) VALUES (?, ?, ?, ?, ?)",
-      args: [1, "Nivara Studio", "nivara-studio", "A BazaarOS demonstration merchant using provenance-labeled public fashion/gifting metadata and clearly separated staging overlays.", "INR"],
+      args: [1, "NovaCart", "novacart", "An AI-transactable lifestyle & fashion merchant enabled by BazaarOS gateway.", "INR"],
     });
     merchantId = Number(insert.lastInsertRowid);
   }
